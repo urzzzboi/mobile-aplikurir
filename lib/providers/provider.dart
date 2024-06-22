@@ -74,10 +74,65 @@ class OSMScreenProvider extends ChangeNotifier {
         await _ambilDataKurir.fetchCoordinates(idKurir);
     fetchedCoordinates =
         _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
-    titikTujuan = [titikAwal, fetchedCoordinates[2]];
+    titikTujuan = [titikAwal, fetchedCoordinates[0]];
     _buatPolyline();
     _hitungTotalJarak();
     _lokasiAlamat(titikAwal);
+  }
+
+  Future<void> updateStatus(String status, List<LatLng> titikTujuan) async {
+    try {
+      final selectedData = dataPengantaran.firstWhere(
+        (item) {
+          double itemLatitude = item['latitude'];
+          double itemLongitude = item['longitude'];
+          return titikTujuan.any((latLng) =>
+              latLng.latitude == itemLatitude &&
+              latLng.longitude == itemLongitude);
+        },
+        orElse: () => null,
+      );
+
+      if (selectedData != null) {
+        final response = await http.post(
+          Uri.parse('${ApiService.url}/riwayat'),
+          body: jsonEncode({
+            'id_kurir': idKurir,
+            'nomor_resi': selectedData['nomor_resi'],
+            'Alamat_Tujuan': selectedData['Alamat_Tujuan'],
+            'Nama_Pengiriman': selectedData['Nama_Pengirim'],
+            'nama_kurir': selectedData['nama_kurir'],
+            'handphone_kurir': selectedData['handphone_kurir'],
+            'email': selectedData['email'],
+            'password': selectedData['password'],
+            'status_pengiriman': status,
+          }),
+          headers: {'Content-Type': 'application/json'},
+        );
+
+        if (response.statusCode == 200) {
+          print('Status OK: $status');
+          if (status == 'Selesai') {
+            final idPengantaran = selectedData['Id_pengantaran_paket'];
+            final deleteResponse = await http.delete(
+                Uri.parse('${ApiService.url}/dataPengantaran2/$idPengantaran'),
+                headers: {'Content-Type': 'application/json'});
+            if (deleteResponse.statusCode == 200) {
+              print('Data pengantaran paket berhasil dihapus.');
+            } else {
+              print(
+                  'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
+            }
+          }
+        } else {
+          print('Data tidak masuk karena: ${response.statusCode}');
+        }
+      } else {
+        print('Data tidak ditemukan');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   void _hitungTotalJarak() async {
@@ -107,9 +162,9 @@ class OSMScreenProvider extends ChangeNotifier {
     }
   }
 
-  String calculateTravelTime(double distanceKm, double speedKmPerHour) {
-    double timeInMinutes = (distanceKm / speedKmPerHour) * 60;
-    return timeInMinutes.toStringAsFixed(0);
+  String calculateTravelTime(double jarak, double kecepatan) {
+    double waktu = (jarak / kecepatan) * 60;
+    return waktu.toStringAsFixed(0);
   }
 
   void _pollingTime() {

@@ -66,7 +66,10 @@ class _StatusScreenState extends State<StatusScreen> {
                                 shadowColor:
                                     const WidgetStatePropertyAll(Colors.black),
                                 elevation: const WidgetStatePropertyAll(5)),
-                            onPressed: () {},
+                            onPressed: () {
+                              provider.updateStatus(
+                                  'Gagal', provider.titikTujuan);
+                            },
                             child: Text(
                               "Gagal",
                               style: TextStyle(
@@ -88,7 +91,10 @@ class _StatusScreenState extends State<StatusScreen> {
                                 shadowColor:
                                     const WidgetStatePropertyAll(Colors.black),
                                 elevation: const WidgetStatePropertyAll(5)),
-                            onPressed: () {},
+                            onPressed: () {
+                              provider.updateStatus(
+                                  'Selesai', provider.titikTujuan);
+                            },
                             child: Text(
                               "Selesai",
                               style: TextStyle(
@@ -193,49 +199,29 @@ class _StatusScreenState extends State<StatusScreen> {
                                                 fontSize: 18,
                                               )),
                                           const Divider(),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text('Penerima : ',
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: mycolor.color1)),
-                                              ),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  '${data['Nama_Penerima']}',
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                          Text('Penerima : ',
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: mycolor.color1)),
+                                          Text(
+                                            '${data['Nama_Penerima']}',
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                            ),
                                           ),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text('No. HP     : ',
-                                                    textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: mycolor.color1)),
-                                              ),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  '${data['No_HP_Penerima']}',
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                          Text('No. HP     : ',
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: mycolor.color1)),
+                                          Text(
+                                            '${data['No_HP_Penerima']}',
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                            ),
+                                          )
                                         ],
                                       )
                                     : const SizedBox();
