@@ -196,7 +196,6 @@ class _StatusScreenState extends State<StatusScreen> {
                                           Row(
                                             children: [
                                               Expanded(
-                                                flex: 1,
                                                 child: Text('Penerima : ',
                                                     style: TextStyle(
                                                         fontSize: 18,
@@ -218,7 +217,6 @@ class _StatusScreenState extends State<StatusScreen> {
                                           Row(
                                             children: [
                                               Expanded(
-                                                flex: 1,
                                                 child: Text('No. HP     : ',
                                                     textAlign: TextAlign.left,
                                                     style: TextStyle(
