@@ -157,21 +157,26 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                   style: const TextStyle(
                                                       fontSize: 15),
                                                 ),
-                                                const Text(
-                                                  ' | Penerima : ',
-                                                  style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  data['Nama_Penerima']
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontSize: 15),
-                                                ),
                                               ],
                                             ),
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: 10,
+                                              left: 10,
+                                            ),
+                                            child: Text(
+                                              ' | Penerima : ',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            data['Nama_Penerima'].toString(),
+                                            style:
+                                                const TextStyle(fontSize: 15),
                                           ),
                                         ],
                                       ),

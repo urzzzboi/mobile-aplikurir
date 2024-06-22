@@ -33,7 +33,7 @@ class OSMScreenProvider extends ChangeNotifier {
   double _totalJarak = 0.0;
   String _waktuTempuh = '';
   double _lastTotalJarak = 0.0;
-  String _lastWaktuTempuh = '';
+  String _lastWaktuTempuh = '0';
 
   bool get isloading => _isLoading;
   bool get isloading1 => _isLoading1;
@@ -74,7 +74,7 @@ class OSMScreenProvider extends ChangeNotifier {
         await _ambilDataKurir.fetchCoordinates(idKurir);
     fetchedCoordinates =
         _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
-    titikTujuan = [titikAwal, fetchedCoordinates[0]];
+    titikTujuan = [titikAwal, fetchedCoordinates[2]];
     _buatPolyline();
     _hitungTotalJarak();
     _lokasiAlamat(titikAwal);
@@ -97,7 +97,7 @@ class OSMScreenProvider extends ChangeNotifier {
     }
     _totalJarak /= 1000;
 
-    _waktuTempuh = calculateTravelTime(_totalJarak, 10.0);
+    _waktuTempuh = calculateTravelTime(_totalJarak, 30.0);
 
     if (_totalJarak != _lastTotalJarak || _waktuTempuh != _lastWaktuTempuh) {
       _lastTotalJarak = _totalJarak;
