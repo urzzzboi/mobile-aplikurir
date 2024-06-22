@@ -139,15 +139,14 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                              bottom: 10,
                                               left: 10,
                                             ),
                                             child: Row(
                                               children: [
                                                 const Text(
-                                                  'Pengirim : ',
+                                                  'Pengirim  : ',
                                                   style: TextStyle(
-                                                    fontSize: 15,
+                                                    fontSize: 16,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -160,23 +159,28 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                               ],
                                             ),
                                           ),
-                                          const Padding(
-                                            padding: EdgeInsets.only(
+                                          Padding(
+                                            padding: const EdgeInsets.only(
                                               bottom: 10,
                                               left: 10,
                                             ),
-                                            child: Text(
-                                              ' | Penerima : ',
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            child: Row(
+                                              children: [
+                                                const Text(
+                                                  'Penerima : ',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  data['Nama_Penerima']
+                                                      .toString(),
+                                                  style: const TextStyle(
+                                                      fontSize: 15),
+                                                )
+                                              ],
                                             ),
-                                          ),
-                                          Text(
-                                            data['Nama_Penerima'].toString(),
-                                            style:
-                                                const TextStyle(fontSize: 15),
                                           ),
                                         ],
                                       ),
