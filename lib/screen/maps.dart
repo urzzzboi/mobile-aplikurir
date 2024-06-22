@@ -73,7 +73,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           children: [
             openStreetMapTileLayer,
-            if (provider.jalurRute != null)
+            if (provider.jalurRute != null || provider.titikTujuan.length == 1)
               PolylineLayer(
                 polylines: [provider.jalurRute!],
               ),

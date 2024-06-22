@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:aplikurir/api/api_service.dart';
 import 'package:aplikurir/model/algoritma_astar.dart';
 import 'package:flutter/material.dart';
@@ -16,26 +15,31 @@ class OSMScreenProvider extends ChangeNotifier {
   final BuildContext context;
   final ApiService _ambilDataKurir = ApiService();
   final MapController mapController = MapController();
+  final int idKurir;
+  final AlgoritmaAStar _algoritmaAStar = AlgoritmaAStar();
   String _prediksiAlamat = '';
   List<dynamic> dataPengantaran = [];
   Map<String, dynamic>? dataPenerima;
   LatLng titikAwal = const LatLng(0.0, 0.0);
+  LatLng lokasiAwal = const LatLng(0.0, 0.0);
   List<LatLng> titikTujuan = [];
-  List<LatLng> titikTujuan1 = [];
-  List<LatLng> titikTujuan2 = [];
   Polyline? jalurRute;
   bool _isLoading = true;
-  LatLng lokasiAwal = const LatLng(0.0, 0.0);
-  final int idKurir;
+  bool _isLoading1 = true;
+  bool _isDisposed = false;
+
   StreamSubscription<Position>? _positionStreamSubscription;
   Timer? _pollingTimer;
-  double _totalJarak1 = 0.0;
-  final AlgoritmaAStar _algoritmaAStar = AlgoritmaAStar();
+  double _totalJarak = 0.0;
+  String _waktuTempuh = '';
+  double _lastTotalJarak = 0.0;
+  String _lastWaktuTempuh = '';
 
-  bool _isDisposed = false;
   bool get isloading => _isLoading;
+  bool get isloading1 => _isLoading1;
   String get prediksiAlamat => _prediksiAlamat;
-  double get totalJarak1 => _totalJarak1;
+  double get totalJarak => _lastTotalJarak;
+  String get waktuTempuh => _lastWaktuTempuh;
 
   OSMScreenProvider(this.globalkey, this.context, this.idKurir) {
     _memintaPerizinanLokasi();
@@ -46,61 +50,66 @@ class OSMScreenProvider extends ChangeNotifier {
   Future<void> _fetchDataPengantaran() async {
     try {
       dataPengantaran = await _ambilDataKurir.fetchDataPengantaran(idKurir);
-      await _fetchCoordinatesAndBuildRoute();
+      print('Data pengantaran berhasil diambil: $dataPengantaran');
 
+      if (dataPengantaran.isEmpty) {
+        _tampilkanSnackBar("Tidak ada data pengantaran.");
+      } else {
+        for (var data in dataPengantaran) {
+          data['Alamat_Tujuan'] ??= 'Tidak ada alamat yang dikirim';
+          data['Nama_Penerima'] ??= '-';
+          data['No_HP_Penerima'] ??= '-';
+        }
+        await _fetchCoordinatesAndBuildRoute();
+      }
       safeNotifyListeners();
     } catch (e) {
-      _tampilkanSnackBar("Tidak bisa mengambil data $e");
+      _tampilkanSnackBar("Tidak bisa mengambil data: ${e.toString()}");
+      print('Error: $e');
     }
   }
 
   Future<void> _fetchCoordinatesAndBuildRoute() async {
-    try {
-      List<LatLng> fetchedCoordinates =
-          await _ambilDataKurir.fetchCoordinates(idKurir);
-      fetchedCoordinates =
-          _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
+    List<LatLng> fetchedCoordinates =
+        await _ambilDataKurir.fetchCoordinates(idKurir);
+    fetchedCoordinates =
+        _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
+    titikTujuan = [titikAwal, fetchedCoordinates[0]];
+    _buatPolyline();
+    _hitungTotalJarak();
+    _lokasiAlamat(titikAwal);
+  }
 
-      titikTujuan = [titikAwal, fetchedCoordinates[0]];
-      titikTujuan2 = [titikAwal, fetchedCoordinates[1]];
+  void _hitungTotalJarak() async {
+    _totalJarak = 0.0;
+    for (int i = 0; i < titikTujuan.length - 1; i++) {
+      final route = await _getRoute(titikTujuan[i], titikTujuan[i + 1]);
+      if (route != null) {
+        for (int j = 0; j < route.length - 1; j++) {
+          _totalJarak += Geolocator.distanceBetween(
+            route[j].latitude,
+            route[j].longitude,
+            route[j + 1].latitude,
+            route[j + 1].longitude,
+          );
+        }
+      }
+    }
+    _totalJarak /= 1000;
 
-      print('Titik Awal: $titikAwal');
-      print('Titik Tujuan: $titikTujuan');
+    _waktuTempuh = calculateTravelTime(_totalJarak, 10.0);
 
-      _buatPolyline();
-      _hitungTotalJarak();
-      _lokasiAlamat(titikAwal);
-    } catch (e) {
-      _tampilkanSnackBar("Error in _fetchCoordinatesAndBuildRoute: $e");
+    if (_totalJarak != _lastTotalJarak || _waktuTempuh != _lastWaktuTempuh) {
+      _lastTotalJarak = _totalJarak;
+      _lastWaktuTempuh = _waktuTempuh;
+      _isLoading1 = false;
+      safeNotifyListeners();
     }
   }
 
-  Future<void> _hitungTotalJarak() async {
-    try {
-      _totalJarak1 = 0.0;
-
-      for (int i = 0; i < titikTujuan.length - 1; i++) {
-        final route = await _getRoute(titikAwal, titikTujuan[0]);
-        if (route != null) {
-          for (int j = 0; j < route.length - 1; j++) {
-            _totalJarak1 += Geolocator.distanceBetween(
-              route[j].latitude,
-              route[j].longitude,
-              route[j + 1].latitude,
-              route[j + 1].longitude,
-            );
-          }
-        }
-      }
-
-      _totalJarak1 /= 1000;
-
-      print('Total Jarak: $_totalJarak1 km');
-
-      safeNotifyListeners();
-    } catch (e) {
-      _tampilkanSnackBar("Error in _hitungTotalJarak: $e");
-    }
+  String calculateTravelTime(double distanceKm, double speedKmPerHour) {
+    double timeInMinutes = (distanceKm / speedKmPerHour) * 60;
+    return timeInMinutes.toStringAsFixed(0);
   }
 
   void _pollingTime() {
@@ -127,13 +136,11 @@ class OSMScreenProvider extends ChangeNotifier {
   Future<void> _ambilPosisiTengah() async {
     bool serviceEnabled;
     LocationPermission permission;
-
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       _tampilkanSnackBar("Lokasi dinonaktifkan");
       return;
     }
-
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -142,20 +149,17 @@ class OSMScreenProvider extends ChangeNotifier {
         return;
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
       _tampilkanSnackBar("Akses Lokasi Ditolak secara Permanen");
       return;
     }
-
     try {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
       );
       titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-
+      print('Posisi sekarang: $titikAwal');
       await _fetchCoordinatesAndBuildRoute();
-
       _positionStreamSubscription = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.best,
@@ -172,7 +176,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
   void handlePositionChange(MapCamera latLng, bool hasGesture) {
     lokasiAwal = latLng.center;
-
     if (!_isDisposed) {
       safeNotifyListeners();
     }
@@ -193,50 +196,46 @@ class OSMScreenProvider extends ChangeNotifier {
         Placemark place = placemarks[0];
         _prediksiAlamat =
             "${place.street}, ${place.locality}, ${place.subLocality}, ${place.administrativeArea}, ${place.country}";
+        _isLoading1 = false;
       } else {
         _prediksiAlamat = "Alamat tidak ditemukan";
       }
     } catch (e) {
-      _prediksiAlamat = "Error: $e";
+      print('$e');
+      _prediksiAlamat = "";
     }
+    print('Alamat yang diprediksi: $_prediksiAlamat');
     if (!_isDisposed) {
       safeNotifyListeners();
     }
   }
 
   void _buatPolyline() async {
-    try {
-      if (titikTujuan.isNotEmpty) {
-        final List<LatLng> polylinePoints = [];
-
-        final LatLng start = titikAwal;
-        final LatLng end = titikTujuan[0];
-
+    if (titikTujuan.isNotEmpty && titikTujuan.length > 1) {
+      final List<LatLng> polylinePoints = [];
+      for (int i = 0; i < titikTujuan.length - 1; i++) {
+        final LatLng start = titikTujuan[i];
+        final LatLng end = titikTujuan[i + 1];
         final route = await _getRoute(start, end);
         if (route != null) {
           polylinePoints.addAll(route);
         }
-
-        jalurRute = Polyline(
-          points: polylinePoints,
-          color: Colors.blue,
-          borderColor: Colors.black,
-          borderStrokeWidth: 2,
-          strokeWidth: 5,
-        );
-
-        print('Jalur Rute: ${jalurRute?.points}');
-        _hitungTotalJarak();
-      } else {
-        jalurRute = null;
-        _totalJarak1 = 0.0;
       }
 
-      _isLoading = false;
-      safeNotifyListeners();
-    } catch (e) {
-      _tampilkanSnackBar("Error in _buatPolyline: $e");
+      jalurRute = Polyline(
+        points: polylinePoints,
+        color: Colors.blue,
+        borderColor: Colors.black,
+        borderStrokeWidth: 2,
+        strokeWidth: 5,
+      );
+      print('Polyline dibuat dengan poin: $polylinePoints');
+    } else {
+      jalurRute = null;
+      _totalJarak = 0.0;
     }
+    _isLoading = false;
+    safeNotifyListeners();
   }
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
@@ -247,11 +246,10 @@ class OSMScreenProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(Uri.parse(url));
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final List coordinates = data['features'][0]['geometry']['coordinates'];
-
+        print('Route coordinates: $coordinates');
         return coordinates.map((coord) {
           return LatLng(coord[1], coord[0]);
         }).toList();
@@ -284,10 +282,9 @@ class OSMScreenProvider extends ChangeNotifier {
     _pollingTimer = null;
     dataPengantaran = [];
     titikTujuan = [];
-    titikTujuan1 = [];
-    titikTujuan2 = [];
-    _totalJarak1 = 0.0;
+    _totalJarak = 0.0;
     _isLoading = true;
+    _isLoading1 = true;
     jalurRute = null;
     _prediksiAlamat = '';
     safeNotifyListeners();
