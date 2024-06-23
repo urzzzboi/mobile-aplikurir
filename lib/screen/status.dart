@@ -1,6 +1,7 @@
 import 'package:aplikurir/component/custom_color.dart';
 import 'package:aplikurir/providers/provider.dart';
 import 'package:aplikurir/screen/login.dart';
+import 'package:aplikurir/screen/maps.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,16 @@ class StatusScreen extends StatefulWidget {
 }
 
 class _StatusScreenState extends State<StatusScreen> {
+  late String storedEmail;
+  late String storedPassword;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    storedEmail = widget.user['email'];
+    storedPassword = widget.user['password'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +79,14 @@ class _StatusScreenState extends State<StatusScreen> {
                             onPressed: () {
                               provider.updateStatus(
                                   'Gagal', provider.titikTujuan);
+                              Navigator.pushReplacement<void, void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) => MapScreen(
+                                    user: widget.user,
+                                  ),
+                                ),
+                              );
                             },
                             child: Text(
                               "Gagal",
@@ -94,6 +112,14 @@ class _StatusScreenState extends State<StatusScreen> {
                             onPressed: () {
                               provider.updateStatus(
                                   'Selesai', provider.titikTujuan);
+                              Navigator.pushReplacement<void, void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) => MapScreen(
+                                    user: widget.user,
+                                  ),
+                                ),
+                              );
                             },
                             child: Text(
                               "Selesai",

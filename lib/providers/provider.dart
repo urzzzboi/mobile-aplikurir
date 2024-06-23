@@ -100,7 +100,7 @@ class OSMScreenProvider extends ChangeNotifier {
             'id_kurir': idKurir,
             'nomor_resi': selectedData['nomor_resi'],
             'Alamat_Tujuan': selectedData['Alamat_Tujuan'],
-            'Nama_Pengiriman': selectedData['Nama_Pengirim'],
+            'Nama_Penerima': selectedData['Nama_Penerima'],
             'nama_kurir': selectedData['nama_kurir'],
             'handphone_kurir': selectedData['handphone_kurir'],
             'email': selectedData['email'],
@@ -110,12 +110,12 @@ class OSMScreenProvider extends ChangeNotifier {
           headers: {'Content-Type': 'application/json'},
         );
 
-        if (response.statusCode == 200) {
+        if (response.statusCode == 201) {
           print('Status OK: $status');
           if (status == 'Selesai') {
-            final idPengantaran = selectedData['Id_pengantaran_paket'];
+            final id = selectedData['Id_pengantaran_paket'];
             final deleteResponse = await http.delete(
-                Uri.parse('${ApiService.url}/dataPengantaran2/$idPengantaran'),
+                Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
                 headers: {'Content-Type': 'application/json'});
             if (deleteResponse.statusCode == 200) {
               print('Data pengantaran paket berhasil dihapus.');
@@ -295,7 +295,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     const String apiKey =
-        '5b3ce3597851110001cf62480572ee009fe843c78002045ec7ba1e31';
+        '5b3ce3597851110001cf6248a83a5159595542d6978d6a7a2d0b1c47';
     final String url =
         'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
