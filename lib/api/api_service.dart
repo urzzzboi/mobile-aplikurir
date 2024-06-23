@@ -18,12 +18,22 @@ class ApiService {
           .map((i) => LatLng(i['latitude'], i['longitude']))
           .toList();
     } else {
-      throw Exception('Coordinat tidak dapat diambil');
+      throw Exception('Data Pengantaran Selesai');
     }
   }
 
   Future<List<dynamic>> fetchDataPengantaran(int idKurir) async {
     final response = await http.get(Uri.parse('$url/dataPengantaran/$idKurir'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as List<dynamic>;
+      return data;
+    } else {
+      throw Exception('List Paket Kosong');
+    }
+  }
+
+  Future<List<dynamic>> fetchDataRiwayat(int idKurir) async {
+    final response = await http.get(Uri.parse('$url/dataRiwayat/$idKurir'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as List<dynamic>;
       return data;

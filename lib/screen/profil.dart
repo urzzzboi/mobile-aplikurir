@@ -42,7 +42,7 @@ class ProfilScreen extends StatelessWidget {
               ),
             ),
             Text(
-              user['nama_kurir'],
+              user['nama'].toString(),
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 30,
@@ -73,7 +73,7 @@ class ProfilScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               child: Text(
-                user['nama_kurir'],
+                user['nama'],
                 style: TextStyle(
                   color: mycolor.color1,
                   fontSize: 25,
@@ -96,7 +96,7 @@ class ProfilScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               child: Text(
-                user['handphone_kurir'],
+                user['handphone'],
                 style: TextStyle(
                   color: mycolor.color1,
                   fontSize: 25,

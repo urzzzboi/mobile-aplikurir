@@ -1,4 +1,5 @@
 import 'package:aplikurir/component/custom_button.dart';
+import 'package:aplikurir/screen/login.dart';
 import 'package:aplikurir/screen/status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -8,6 +9,7 @@ import 'package:aplikurir/component/custom_color.dart';
 
 class MapScreen extends StatefulWidget {
   final dynamic user;
+
   const MapScreen({super.key, this.user});
 
   @override
@@ -32,11 +34,37 @@ class _MapScreenState extends State<MapScreen> {
       canPop: false,
       child: ChangeNotifierProvider(
         create: (context) =>
-            OSMScreenProvider(_scaffoldKey, context, widget.user['kurir_id']),
+            OSMScreenProvider(_scaffoldKey, context, widget.user['id_kurir']),
         child: Scaffold(
           key: _scaffoldKey,
-          body: Consumer<OSMScreenProvider>(
-            builder: (context, provider, _) {
+          body: Consumer<OSMScreenProvider>(builder: (context, provider, _) {
+            if (provider.dataPengantaran.isEmpty) {
+              return AlertDialog(
+                title: const Text('Pengantaran Selesai'),
+                content: const SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Text('Anda telah menyelesaikan pengantaran.'),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      provider.cancelDelivery();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ScreenRoute(user: widget.user),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            } else {
               return provider.isloading
                   ? const Center(
                       child: Column(
@@ -51,8 +79,8 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                     )
                   : _buildMapWidget(context, provider);
-            },
-          ),
+            }
+          }),
         ),
       ),
     );

@@ -29,7 +29,7 @@ class _StatusScreenState extends State<StatusScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) =>
-          OSMScreenProvider(_scaffoldKey, context, widget.user['kurir_id']),
+          OSMScreenProvider(_scaffoldKey, context, widget.user['id_kurir']),
       child: Scaffold(
         key: _scaffoldKey,
         body: Consumer<OSMScreenProvider>(
@@ -78,7 +78,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                 elevation: const WidgetStatePropertyAll(5)),
                             onPressed: () {
                               provider.updateStatus(
-                                  'Gagal', provider.titikTujuan);
+                                  'Gagal', provider.titikTujuan, context);
                               Navigator.pushReplacement<void, void>(
                                 context,
                                 MaterialPageRoute<void>(
@@ -111,7 +111,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                 elevation: const WidgetStatePropertyAll(5)),
                             onPressed: () {
                               provider.updateStatus(
-                                  'Selesai', provider.titikTujuan);
+                                  'Selesai', provider.titikTujuan, context);
                               Navigator.pushReplacement<void, void>(
                                 context,
                                 MaterialPageRoute<void>(

@@ -17,7 +17,7 @@ class BerandaScreen extends StatefulWidget {
 class _BerandaScreenState extends State<BerandaScreen> {
   late Future<List<dynamic>> dataList;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool canPop = true;
+  bool canPop = false;
 
   String? storedEmail;
   String? storedPassword;
@@ -26,7 +26,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
     super.initState();
     storedEmail = widget.user['email'];
     storedPassword = widget.user['password'];
-    final userId = widget.user['kurir_id'];
+    final userId = widget.user['id_kurir'];
     dataList = ApiService().fetchDataPengantaran(userId);
   }
 
@@ -35,23 +35,9 @@ class _BerandaScreenState extends State<BerandaScreen> {
     final mycolor = CustomStyle();
     return PopScope(
       canPop: canPop,
-      onPopInvoked: (bool value) {
-        setState(() {
-          canPop = !value;
-        });
-
-        if (canPop) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Click once more to go back"),
-              duration: Duration(milliseconds: 1500),
-            ),
-          );
-        }
-      },
       child: ChangeNotifierProvider(
         create: (context) =>
-            OSMScreenProvider(_scaffoldKey, context, widget.user['kurir_id']),
+            OSMScreenProvider(_scaffoldKey, context, widget.user['id_kurir']),
         child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(

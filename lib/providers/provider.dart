@@ -53,7 +53,7 @@ class OSMScreenProvider extends ChangeNotifier {
       print('Data pengantaran berhasil diambil: $dataPengantaran');
 
       if (dataPengantaran.isEmpty) {
-        _tampilkanSnackBar("Tidak ada data pengantaran.");
+        print("Tidak ada data pengantaran.1");
       } else {
         for (var data in dataPengantaran) {
           data['Alamat_Tujuan'] ??= 'Tidak ada alamat yang dikirim';
@@ -64,7 +64,7 @@ class OSMScreenProvider extends ChangeNotifier {
       }
       safeNotifyListeners();
     } catch (e) {
-      _tampilkanSnackBar("Tidak bisa mengambil data: ${e.toString()}");
+      print("Tidak bisa mengambil data: ${e.toString()}");
       print('Error: $e');
     }
   }
@@ -80,7 +80,36 @@ class OSMScreenProvider extends ChangeNotifier {
     _lokasiAlamat(titikAwal);
   }
 
-  Future<void> updateStatus(String status, List<LatLng> titikTujuan) async {
+  Future<void> tampilkanAlertDialogBerhasil(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pengantaran Selesai'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Anda telah menyelesaikan pengantaran.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacementNamed(context, '/beranda');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> updateStatus(
+      String status, List<LatLng> titikTujuan, BuildContext context) async {
     try {
       final selectedData = dataPengantaran.firstWhere(
         (item) {
@@ -113,6 +142,18 @@ class OSMScreenProvider extends ChangeNotifier {
         if (response.statusCode == 201) {
           print('Status OK: $status');
           if (status == 'Selesai') {
+            final id = selectedData['Id_pengantaran_paket'];
+            final deleteResponse = await http.delete(
+                Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
+                headers: {'Content-Type': 'application/json'});
+            if (deleteResponse.statusCode == 200) {
+              print('Data pengantaran paket berhasil dihapus.');
+            } else {
+              print(
+                  'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
+            }
+          }
+          if (status == 'Gagal') {
             final id = selectedData['Id_pengantaran_paket'];
             final deleteResponse = await http.delete(
                 Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
@@ -181,9 +222,9 @@ class OSMScreenProvider extends ChangeNotifier {
       if (await Permission.location.request().isGranted) {
         await _ambilPosisiTengah();
       } else if (status.isDenied) {
-        _tampilkanSnackBar('Izin Lokasi ditolak');
+        print('Izin Lokasi ditolak');
       } else if (status.isPermanentlyDenied) {
-        _tampilkanSnackBar('Izinkan Lokasi terlebih dahulu');
+        print('Izinkan Lokasi terlebih dahulu');
       }
     }
   }
@@ -193,19 +234,19 @@ class OSMScreenProvider extends ChangeNotifier {
     LocationPermission permission;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      _tampilkanSnackBar("Lokasi dinonaktifkan");
+      print("Lokasi dinonaktifkan");
       return;
     }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        _tampilkanSnackBar("Akses Lokasi Ditolak");
+        print("Akses Lokasi Ditolak");
         return;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      _tampilkanSnackBar("Akses Lokasi Ditolak secara Permanen");
+      print("Akses Lokasi Ditolak secara Permanen");
       return;
     }
     try {
@@ -225,7 +266,7 @@ class OSMScreenProvider extends ChangeNotifier {
       });
       safeNotifyListeners();
     } catch (e) {
-      _tampilkanSnackBar("Map tidak bisa ditampilkan : $e");
+      print("Map tidak bisa ditampilkan : $e");
     }
   }
 
@@ -295,7 +336,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     const String apiKey =
-        '5b3ce3597851110001cf6248a83a5159595542d6978d6a7a2d0b1c47';
+        '5b3ce3597851110001cf624863abe40d1fc64f6eb6219026d816a96e';
     final String url =
         'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
@@ -313,16 +354,9 @@ class OSMScreenProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _tampilkanSnackBar("Error retrieving route: $e");
+      print("Error retrieving route: $e");
       return null;
     }
-  }
-
-  void _tampilkanSnackBar(String message) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final snackBar = SnackBar(content: Text(message));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    });
   }
 
   void startDelivery() {

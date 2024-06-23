@@ -201,7 +201,9 @@ class ScreenRoute extends StatelessWidget {
     return LayoutNavBottom(
       navigationScreens: [
         BerandaScreen(user: user),
-        const RiwayatScreen(),
+        RiwayatScreen(
+          user: user,
+        ),
         ProfilScreen(user: user),
       ],
     );
