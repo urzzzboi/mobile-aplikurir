@@ -30,6 +30,7 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mycolor = CustomStyle();
     return PopScope(
       canPop: false,
       child: ChangeNotifierProvider(
@@ -38,32 +39,23 @@ class _MapScreenState extends State<MapScreen> {
         child: Scaffold(
           key: _scaffoldKey,
           body: Consumer<OSMScreenProvider>(builder: (context, provider, _) {
-            if (provider.dataPengantaran.isEmpty) {
-              return AlertDialog(
-                title: const Text('Pengantaran Selesai'),
-                content: const SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Text('Anda telah menyelesaikan pengantaran.'),
-                    ],
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      provider.cancelDelivery();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ScreenRoute(user: widget.user),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              );
+            if (provider.dataPengantaran.isNotEmpty) {
+              return provider.isloading
+                  ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Tunggu Sebentar..."),
+                          SizedBox(
+                            width: 200,
+                            child: LinearProgressIndicator(
+                              color: Colors.amber,
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : _buildMapWidget(context, provider);
             } else {
               return provider.isloading
                   ? const Center(
@@ -73,12 +65,39 @@ class _MapScreenState extends State<MapScreen> {
                           Text("Tunggu Sebentar..."),
                           SizedBox(
                             width: 200,
-                            child: LinearProgressIndicator(),
+                            child: LinearProgressIndicator(
+                              color: Colors.amber,
+                            ),
                           )
                         ],
                       ),
                     )
-                  : _buildMapWidget(context, provider);
+                  : AlertDialog(
+                      title: const Text('Pengantaran Selesai'),
+                      content: const SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Text('Anda telah menyelesaikan pengantaran.'),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            provider.cancelDelivery();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ScreenRoute(user: widget.user),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
             }
           }),
         ),

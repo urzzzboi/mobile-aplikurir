@@ -161,12 +161,12 @@ class _StatusScreenState extends State<StatusScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
-                                provider.isloading1
-                                    ? 'Alamat Sekarang'
-                                    : provider.prediksiAlamat,
-                                style: const TextStyle(fontSize: 18),
-                              ),
+                              provider.isloading1
+                                  ? const Divider()
+                                  : Text(
+                                      provider.prediksiAlamat,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
                             ],
                           ),
                         ),

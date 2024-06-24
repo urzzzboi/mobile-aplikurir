@@ -62,7 +62,7 @@ class DetailScreen extends StatelessWidget {
                   CustomText2(text: '${data['Dimensi']} cm'),
                 ]),
                 CustomContainer(children: [
-                  const CustomText1(text: 'Jumlah_Kiriman'),
+                  const CustomText1(text: 'Jumlah Kiriman'),
                   CustomText2(text: '${data['Jumlah_Kiriman']}'),
                 ]),
                 const Divider(),

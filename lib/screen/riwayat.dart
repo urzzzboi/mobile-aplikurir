@@ -202,15 +202,15 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                             Container(
                               alignment: Alignment.center,
                               margin: const EdgeInsets.symmetric(vertical: 10),
-                              child: Text(
-                                selectFilter
-                                    ? "Pengiriman paket pada ${DateFormat('dd MMMM yyyy', 'id').format(_selectedDate)}"
-                                    : "Pengiriman paket hari ini",
-                                style: TextStyle(
-                                    color: mycolor.color1,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                              child: selectFilter
+                                  ? Divider()
+                                  : Text(
+                                      "Pengiriman paket hari ini",
+                                      style: TextStyle(
+                                          color: mycolor.color1,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                             ),
                           ],
                         ),
