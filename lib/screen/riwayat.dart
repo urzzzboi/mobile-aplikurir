@@ -136,6 +136,9 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                   return const Center(
                     child: Text('Tunggu Sebentar ...'),
                   );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                      child: Text('Riwayat Pengiriman Kosong!'));
                 } else {
                   List<dynamic> dataList = snapshot.data!;
                   return Column(

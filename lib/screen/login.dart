@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _boolValue = true;
   String? storedEmail;
   String? storedPassword;
+  String pesanKesalahan = '';
 
   Future<void> _login() async {
     final response = await http.post(
@@ -47,19 +48,17 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email atau password salah!'),
-        ),
-      );
+      setState(() {
+        pesanKesalahan = 'Email atau Password yang dimasukkan tidak sesuai!';
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final mycolor = CustomStyle();
-    return PopScope(
-      canPop: false,
+    return WillPopScope(
+      onWillPop: () async => false,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Column(
@@ -162,12 +161,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         if (_emailController.text.isEmpty ||
                             _passwordController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'Email atau password tidak boleh kosong'),
-                            ),
-                          );
+                          setState(() {
+                            pesanKesalahan =
+                                'Email atau password tidak boleh kosong!';
+                          });
                         } else {
                           _login();
                         }
@@ -177,6 +174,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: mycolor.color2,
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: Text(
+                      pesanKesalahan,
+                      style: TextStyle(
+                        color: mycolor.color4,
                       ),
                     ),
                   ),
@@ -201,9 +209,7 @@ class ScreenRoute extends StatelessWidget {
     return LayoutNavBottom(
       navigationScreens: [
         BerandaScreen(user: user),
-        RiwayatScreen(
-          user: user,
-        ),
+        RiwayatScreen(user: user),
         ProfilScreen(user: user),
       ],
     );

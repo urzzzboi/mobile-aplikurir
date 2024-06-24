@@ -23,6 +23,7 @@ class OSMScreenProvider extends ChangeNotifier {
   LatLng titikAwal = const LatLng(0.0, 0.0);
   LatLng lokasiAwal = const LatLng(0.0, 0.0);
   List<LatLng> titikTujuan = [];
+  List<LatLng> listTitikTujuan = [];
   Polyline? jalurRute;
   bool _isLoading = true;
   bool _isLoading1 = true;
@@ -75,6 +76,7 @@ class OSMScreenProvider extends ChangeNotifier {
     fetchedCoordinates =
         _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
     titikTujuan = [titikAwal, fetchedCoordinates[0]];
+    listTitikTujuan = [titikAwal, ...fetchedCoordinates];
     _buatPolyline();
     _hitungTotalJarak();
     _lokasiAlamat(titikAwal);
@@ -336,7 +338,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     const String apiKey =
-        '5b3ce3597851110001cf624863abe40d1fc64f6eb6219026d816a96e';
+        '5b3ce3597851110001cf62488f022a1770214ffcbdb1cf4fca02d131';
     final String url =
         'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 

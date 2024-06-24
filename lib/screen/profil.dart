@@ -36,14 +36,13 @@ class ProfilScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.only(top: 20, bottom: 5),
               child: const CircleAvatar(
-                backgroundImage: NetworkImage(
-                    "https://cdn0-production-images-kly.akamaized.net/r54nW4zkx08SZbVManHo1Ekxm9g=/500x500/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/4504937/original/019897000_1689582125-7680241_3697355.jpg"),
+                backgroundImage: AssetImage('assets/images/logo-icon.png'),
                 radius: 60,
               ),
             ),
             Text(
               user['nama'].toString(),
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -141,10 +140,84 @@ class ProfilScreen extends StatelessWidget {
                   backgroundColor: WidgetStatePropertyAll(mycolor.color4),
                 ),
                 onPressed: () {
-                  Route tampilanRoute = MaterialPageRoute(
-                      builder: (context) => const LoginScreen());
-                  Navigator.pushAndRemoveUntil(
-                      context, tampilanRoute, (route) => false);
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              style: ButtonStyle(
+                                  side: const WidgetStatePropertyAll(BorderSide(
+                                    width: 2.0,
+                                    color: Colors.black,
+                                    style: BorderStyle.solid,
+                                    strokeAlign: BorderSide.strokeAlignCenter,
+                                  )),
+                                  shape: WidgetStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  backgroundColor: const WidgetStatePropertyAll(
+                                      Colors.transparent)),
+                              child: const Text(
+                                "Batal",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Route tampilanRoute = MaterialPageRoute(
+                                    builder: (context) => const LoginScreen());
+                                Navigator.pushAndRemoveUntil(
+                                    context, tampilanRoute, (route) => false);
+                              },
+                              style: ButtonStyle(
+                                  side: WidgetStatePropertyAll(BorderSide(
+                                    width: 2.0,
+                                    color: mycolor.color4,
+                                    style: BorderStyle.solid,
+                                    strokeAlign: BorderSide.strokeAlignCenter,
+                                  )),
+                                  shape: WidgetStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      WidgetStatePropertyAll(mycolor.color4)),
+                              child: const Text(
+                                "Keluar",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                          actionsAlignment: MainAxisAlignment.center,
+                          content: const Text(
+                            'Apakah Anda yakin ingin keluar?',
+                            textAlign: TextAlign.center,
+                          ),
+                          contentTextStyle: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                          contentPadding: const EdgeInsets.all(15),
+                        );
+                      });
                 },
                 child: Text(
                   "Keluar",
