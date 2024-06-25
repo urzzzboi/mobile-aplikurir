@@ -3,6 +3,7 @@ import 'package:aplikurir/providers/provider.dart';
 import 'package:aplikurir/screen/login.dart';
 import 'package:aplikurir/screen/maps.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class StatusScreen extends StatefulWidget {
@@ -18,11 +19,22 @@ class _StatusScreenState extends State<StatusScreen> {
   late String storedPassword;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  String _waktu = '';
+  String _tanggal = '';
+
   @override
   void initState() {
     super.initState();
     storedEmail = widget.user['email'];
     storedPassword = widget.user['password'];
+  }
+
+  void _addTime() {
+    setState(() {
+      DateTime now = DateTime.now();
+      _waktu = DateFormat('HH:mm:ss').format(now);
+      _tanggal = DateFormat('yyyy-MM-dd').format(now);
+    });
   }
 
   @override
@@ -77,8 +89,9 @@ class _StatusScreenState extends State<StatusScreen> {
                                     const WidgetStatePropertyAll(Colors.black),
                                 elevation: const WidgetStatePropertyAll(5)),
                             onPressed: () {
-                              provider.updateStatus(
-                                  'Gagal', provider.titikTujuan, context);
+                              _addTime();
+                              provider.updateStatus('Gagal', _waktu, _tanggal,
+                                  provider.titikTujuan, context);
                               Navigator.pushReplacement<void, void>(
                                 context,
                                 MaterialPageRoute<void>(
@@ -110,8 +123,9 @@ class _StatusScreenState extends State<StatusScreen> {
                                     const WidgetStatePropertyAll(Colors.black),
                                 elevation: const WidgetStatePropertyAll(5)),
                             onPressed: () {
-                              provider.updateStatus(
-                                  'Selesai', provider.titikTujuan, context);
+                              _addTime();
+                              provider.updateStatus('Selesai', _waktu, _tanggal,
+                                  provider.titikTujuan, context);
                               Navigator.pushReplacement<void, void>(
                                 context,
                                 MaterialPageRoute<void>(

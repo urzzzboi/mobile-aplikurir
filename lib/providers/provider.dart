@@ -54,14 +54,8 @@ class OSMScreenProvider extends ChangeNotifier {
       print('Data pengantaran berhasil diambil: $dataPengantaran');
 
       if (dataPengantaran.isEmpty) {
-        print("Tidak ada data pengantaran.1");
-      } else {
-        for (var data in dataPengantaran) {
-          data['Alamat_Tujuan'] ??= 'Tidak ada alamat yang dikirim';
-          data['Nama_Penerima'] ??= '-';
-          data['No_HP_Penerima'] ??= '-';
-        }
-        await _fetchCoordinatesAndBuildRoute();
+        print('Data tidak ada');
+        print(dataPengantaran);
       }
       safeNotifyListeners();
     } catch (e) {
@@ -110,8 +104,8 @@ class OSMScreenProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> updateStatus(
-      String status, List<LatLng> titikTujuan, BuildContext context) async {
+  Future<void> updateStatus(String status, String waktu, String tanggal,
+      List<LatLng> titikTujuan, BuildContext context) async {
     try {
       final selectedData = dataPengantaran.firstWhere(
         (item) {
@@ -137,6 +131,8 @@ class OSMScreenProvider extends ChangeNotifier {
             'email': selectedData['email'],
             'password': selectedData['password'],
             'status_pengiriman': status,
+            'waktu_pengiriman': waktu,
+            'tanggal_pengiriman': tanggal,
           }),
           headers: {'Content-Type': 'application/json'},
         );
