@@ -54,8 +54,7 @@ class OSMScreenProvider extends ChangeNotifier {
       print('Data pengantaran berhasil diambil: $dataPengantaran');
 
       if (dataPengantaran.isEmpty) {
-        print('Data tidak ada');
-        print(dataPengantaran);
+        print('Data tidak bisa diambil');
       }
       safeNotifyListeners();
     } catch (e) {
@@ -74,34 +73,6 @@ class OSMScreenProvider extends ChangeNotifier {
     _buatPolyline();
     _hitungTotalJarak();
     _lokasiAlamat(titikAwal);
-  }
-
-  Future<void> tampilkanAlertDialogBerhasil(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Pengantaran Selesai'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Anda telah menyelesaikan pengantaran.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushReplacementNamed(context, '/beranda');
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<void> updateStatus(String status, String waktu, String tanggal,
@@ -249,7 +220,7 @@ class OSMScreenProvider extends ChangeNotifier {
     }
     try {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
+        desiredAccuracy: LocationAccuracy.high,
       );
       titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
       print('Posisi sekarang: $titikAwal');
@@ -264,7 +235,7 @@ class OSMScreenProvider extends ChangeNotifier {
       });
       safeNotifyListeners();
     } catch (e) {
-      print("Map tidak bisa ditampilkan : $e");
+      print("Tidak bisa ambil tengah karena $e");
     }
   }
 

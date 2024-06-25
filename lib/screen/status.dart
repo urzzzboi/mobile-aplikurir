@@ -124,8 +124,13 @@ class _StatusScreenState extends State<StatusScreen> {
                                 elevation: const WidgetStatePropertyAll(5)),
                             onPressed: () {
                               _addTime();
-                              provider.updateStatus('Selesai', _waktu, _tanggal,
-                                  provider.titikTujuan, context);
+                              provider.updateStatus(
+                                'Selesai',
+                                _waktu,
+                                _tanggal,
+                                provider.titikTujuan,
+                                context,
+                              );
                               Navigator.pushReplacement<void, void>(
                                 context,
                                 MaterialPageRoute<void>(
