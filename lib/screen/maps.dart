@@ -32,106 +32,117 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final mycolor = CustomStyle();
     return PopScope(
-      canPop: false,
-      child: ChangeNotifierProvider(
-        create: (context) =>
-            OSMScreenProvider(_scaffoldKey, context, widget.user['id_kurir']),
-        child: Scaffold(
-          key: _scaffoldKey,
-          body: Consumer<OSMScreenProvider>(builder: (context, provider, _) {
-            if (provider.isloading) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Tunggu Sebentar",
-                      style: TextStyle(color: mycolor.color1),
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: LinearProgressIndicator(
-                        color: mycolor.color1,
-                        minHeight: 5,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            } else if (provider.dataPengantaran.isEmpty) {
-              return AlertDialog(
-                contentPadding: const EdgeInsets.all(10),
-                title: Column(
-                  children: [
-                    Image.asset(
-                      'assets/images/logo-icon.png',
-                      width: 100,
-                    ),
-                    Text(
-                      'Pengantaran Selesai!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: mycolor.color1,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                content: const SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Column(
-                        children: [
-                          Text(
-                            'Anda telah menyelesaikan pengantaran paket di hari ini.',
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            'Well Done!!!',
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Provider.of<OSMScreenProvider>(context, listen: false)
-                            .cancelDelivery();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ScreenRoute(user: widget.user),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                          padding: const WidgetStatePropertyAll(
-                              EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 5)),
-                          backgroundColor:
-                              WidgetStatePropertyAll(mycolor.color1)),
-                      child: Text(
-                        'Selesai',
-                        style: TextStyle(
-                            color: mycolor.color2,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold),
-                      )),
-                ],
-                actionsAlignment: MainAxisAlignment.center,
-              );
-            } else {
-              return _buildMapWidget(context, provider);
-            }
-          }),
+        canPop: false,
+        child: ChangeNotifierProvider(
+          create: (context) =>
+              OSMScreenProvider(_scaffoldKey, context, widget.user['id_kurir']),
+          child: Scaffold(
+            key: _scaffoldKey,
+            body: Consumer<OSMScreenProvider>(
+              builder: (context, provider, _) {
+                if (provider.isloading) {
+                  return _buildLoadingScreen(mycolor);
+                } else {
+                  return provider.dataPengantaran.isEmpty
+                      ? _buildCompletionDialog(context, mycolor, provider)
+                      : _buildMapWidget(context, provider);
+                }
+              },
+            ),
+          ),
+        ));
+  }
+
+  Widget _buildLoadingScreen(CustomStyle mycolor) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Tunggu Sebentar",
+            style: TextStyle(color: mycolor.color1),
+          ),
+          SizedBox(
+            width: 200,
+            child: LinearProgressIndicator(
+              color: mycolor.color1,
+              minHeight: 5,
+              borderRadius: BorderRadius.circular(5),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompletionDialog(
+      BuildContext context, CustomStyle mycolor, OSMScreenProvider provider) {
+    return Center(
+      child: AlertDialog(
+        contentPadding: const EdgeInsets.all(10),
+        title: Column(
+          children: [
+            Image.asset(
+              'assets/images/logo-icon.png',
+              width: 100,
+            ),
+            Text(
+              'Pengantaran Selesai!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 30,
+                color: mycolor.color1,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
+        content: const SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Column(
+                children: [
+                  Text(
+                    'Anda telah menyelesaikan pengantaran paket di hari ini.',
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    'Well Done!!!',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              provider.cancelDelivery();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ScreenRoute(user: widget.user),
+                ),
+              );
+            },
+            style: ButtonStyle(
+              padding: const WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: 40, vertical: 5)),
+              backgroundColor: WidgetStatePropertyAll(mycolor.color1),
+            ),
+            child: Text(
+              'Selesai',
+              style: TextStyle(
+                color: mycolor.color2,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+        actionsAlignment: MainAxisAlignment.center,
       ),
     );
   }
@@ -140,6 +151,74 @@ class _MapScreenState extends State<MapScreen> {
     final mycolor = CustomStyle();
     return Stack(
       children: [
+        // if (provider.dataPengantaran.isEmpty)
+        //   Container(
+        //     child: AlertDialog(
+        //       contentPadding: const EdgeInsets.all(10),
+        //       title: Column(
+        //         children: [
+        //           Image.asset(
+        //             'assets/images/logo-icon.png',
+        //             width: 100,
+        //           ),
+        //           Text(
+        //             'Pengantaran Selesai!',
+        //             textAlign: TextAlign.center,
+        //             style: TextStyle(
+        //               fontSize: 30,
+        //               color: mycolor.color1,
+        //               fontWeight: FontWeight.bold,
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //       content: const SingleChildScrollView(
+        //         child: ListBody(
+        //           children: <Widget>[
+        //             Column(
+        //               children: [
+        //                 Text(
+        //                   'Anda telah menyelesaikan pengantaran paket di hari ini.',
+        //                   textAlign: TextAlign.center,
+        //                 ),
+        //                 Text(
+        //                   'Well Done!!!',
+        //                   textAlign: TextAlign.center,
+        //                 ),
+        //               ],
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //       actions: <Widget>[
+        //         TextButton(
+        //             onPressed: () {
+        //               Navigator.of(context).pop();
+        //               Provider.of<OSMScreenProvider>(context, listen: false)
+        //                   .cancelDelivery();
+        //               Navigator.push(
+        //                 context,
+        //                 MaterialPageRoute(
+        //                   builder: (context) => ScreenRoute(user: widget.user),
+        //                 ),
+        //               );
+        //             },
+        //             style: ButtonStyle(
+        //                 padding: const WidgetStatePropertyAll(
+        //                     EdgeInsets.symmetric(horizontal: 40, vertical: 5)),
+        //                 backgroundColor:
+        //                     WidgetStatePropertyAll(mycolor.color1)),
+        //             child: Text(
+        //               'Selesai',
+        //               style: TextStyle(
+        //                   color: mycolor.color2,
+        //                   fontSize: 30,
+        //                   fontWeight: FontWeight.bold),
+        //             )),
+        //       ],
+        //       actionsAlignment: MainAxisAlignment.center,
+        //     ),
+        //   ),
         FlutterMap(
           mapController: provider.mapController,
           options: MapOptions(
@@ -157,21 +236,22 @@ class _MapScreenState extends State<MapScreen> {
               ),
             MarkerLayer(
               markers: [
-                ...provider.titikTujuan
-                    .sublist(1)
-                    .map(
-                      (latLng) => Marker(
-                        width: 60,
-                        height: 60,
-                        point: latLng,
-                        child: const Icon(
-                          Icons.location_pin,
-                          color: Colors.red,
-                          size: 50,
+                if (provider.titikTujuan.length > 1)
+                  ...provider.titikTujuan
+                      .sublist(1)
+                      .map(
+                        (latLng) => Marker(
+                          width: 60,
+                          height: 60,
+                          point: latLng,
+                          child: const Icon(
+                            Icons.location_pin,
+                            color: Colors.red,
+                            size: 50,
+                          ),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      )
+                      .toList(),
                 Marker(
                   width: 40,
                   height: 40,

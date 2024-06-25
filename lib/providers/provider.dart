@@ -48,6 +48,14 @@ class OSMScreenProvider extends ChangeNotifier {
     _pollingTime();
   }
 
+  Future<void> loadData() async {
+    _isLoading = true;
+    notifyListeners();
+    await Future.delayed(const Duration(seconds: 2));
+    _isLoading = false;
+    notifyListeners();
+  }
+
   Future<void> _fetchDataPengantaran() async {
     try {
       dataPengantaran = await _ambilDataKurir.fetchDataPengantaran(idKurir);
@@ -56,10 +64,12 @@ class OSMScreenProvider extends ChangeNotifier {
       if (dataPengantaran.isEmpty) {
         print('Data tidak bisa diambil');
       }
-      safeNotifyListeners();
     } catch (e) {
       print("Tidak bisa mengambil data: ${e.toString()}");
       print('Error: $e');
+    } finally {
+      _isLoading = false;
+      safeNotifyListeners();
     }
   }
 
