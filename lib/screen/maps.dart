@@ -151,82 +151,19 @@ class _MapScreenState extends State<MapScreen> {
     final mycolor = CustomStyle();
     return Stack(
       children: [
-        // if (provider.dataPengantaran.isEmpty)
-        //   Container(
-        //     child: AlertDialog(
-        //       contentPadding: const EdgeInsets.all(10),
-        //       title: Column(
-        //         children: [
-        //           Image.asset(
-        //             'assets/images/logo-icon.png',
-        //             width: 100,
-        //           ),
-        //           Text(
-        //             'Pengantaran Selesai!',
-        //             textAlign: TextAlign.center,
-        //             style: TextStyle(
-        //               fontSize: 30,
-        //               color: mycolor.color1,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //       content: const SingleChildScrollView(
-        //         child: ListBody(
-        //           children: <Widget>[
-        //             Column(
-        //               children: [
-        //                 Text(
-        //                   'Anda telah menyelesaikan pengantaran paket di hari ini.',
-        //                   textAlign: TextAlign.center,
-        //                 ),
-        //                 Text(
-        //                   'Well Done!!!',
-        //                   textAlign: TextAlign.center,
-        //                 ),
-        //               ],
-        //             ),
-        //           ],
-        //         ),
-        //       ),
-        //       actions: <Widget>[
-        //         TextButton(
-        //             onPressed: () {
-        //               Navigator.of(context).pop();
-        //               Provider.of<OSMScreenProvider>(context, listen: false)
-        //                   .cancelDelivery();
-        //               Navigator.push(
-        //                 context,
-        //                 MaterialPageRoute(
-        //                   builder: (context) => ScreenRoute(user: widget.user),
-        //                 ),
-        //               );
-        //             },
-        //             style: ButtonStyle(
-        //                 padding: const WidgetStatePropertyAll(
-        //                     EdgeInsets.symmetric(horizontal: 40, vertical: 5)),
-        //                 backgroundColor:
-        //                     WidgetStatePropertyAll(mycolor.color1)),
-        //             child: Text(
-        //               'Selesai',
-        //               style: TextStyle(
-        //                   color: mycolor.color2,
-        //                   fontSize: 30,
-        //                   fontWeight: FontWeight.bold),
-        //             )),
-        //       ],
-        //       actionsAlignment: MainAxisAlignment.center,
-        //     ),
-        //   ),
         FlutterMap(
           mapController: provider.mapController,
           options: MapOptions(
             initialCenter: provider.titikAwal,
             initialZoom: 14,
             interactionOptions: const InteractionOptions(
-                flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag),
-            onPositionChanged: provider.handlePositionChange,
+              flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+            ),
+            onPositionChanged: (position, hasGesture) {
+              if (provider.lokasiAwal != position.center) {
+                provider.handlePositionChange(position, hasGesture);
+              }
+            },
           ),
           children: [
             openStreetMapTileLayer,

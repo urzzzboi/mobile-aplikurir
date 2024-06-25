@@ -14,7 +14,7 @@ class OSMScreenProvider extends ChangeNotifier {
   final GlobalKey<ScaffoldState> globalkey;
   final BuildContext context;
   final ApiService _ambilDataKurir = ApiService();
-  final MapController mapController = MapController();
+  late MapController mapController = MapController();
   final int idKurir;
   final AlgoritmaAStar _algoritmaAStar = AlgoritmaAStar();
   String _prediksiAlamat = '';
@@ -41,26 +41,21 @@ class OSMScreenProvider extends ChangeNotifier {
   String get prediksiAlamat => _prediksiAlamat;
   double get totalJarak => _lastTotalJarak;
   String get waktuTempuh => _lastWaktuTempuh;
+  bool get cekDataPengantaran => dataPengantaran.isEmpty;
 
   OSMScreenProvider(this.globalkey, this.context, this.idKurir) {
-    _memintaPerizinanLokasi();
-    _fetchDataPengantaran();
-    _pollingTime();
-  }
-
-  Future<void> loadData() async {
-    _isLoading = true;
-    notifyListeners();
-    await Future.delayed(const Duration(seconds: 2));
-    _isLoading = false;
-    notifyListeners();
+    mapController = MapController();
+    _memintaPerizinanLokasi().then((_) {
+      _fetchDataPengantaran();
+      _pollingTime();
+    });
   }
 
   Future<void> _fetchDataPengantaran() async {
     try {
       dataPengantaran = await _ambilDataKurir.fetchDataPengantaran(idKurir);
       print('Data pengantaran berhasil diambil: $dataPengantaran');
-
+      print(cekDataPengantaran);
       if (dataPengantaran.isEmpty) {
         print('Data tidak bisa diambil');
       }
@@ -195,7 +190,7 @@ class OSMScreenProvider extends ChangeNotifier {
     });
   }
 
-  void _memintaPerizinanLokasi() async {
+  Future<void> _memintaPerizinanLokasi() async {
     var status = await Permission.location.status;
     if (status.isDenied || status.isPermanentlyDenied || status.isGranted) {
       if (await Permission.location.request().isGranted) {
@@ -250,9 +245,13 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   void handlePositionChange(MapCamera latLng, bool hasGesture) {
-    lokasiAwal = latLng.center;
-    if (!_isDisposed) {
-      safeNotifyListeners();
+    print('Current Location: $lokasiAwal, New Location: ${latLng.center}');
+    if (lokasiAwal != latLng.center) {
+      lokasiAwal = latLng.center;
+      print('Location updated to: $lokasiAwal');
+      if (!_isDisposed) {
+        safeNotifyListeners();
+      }
     }
   }
 
