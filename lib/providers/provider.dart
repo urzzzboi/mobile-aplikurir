@@ -24,6 +24,7 @@ class OSMScreenProvider extends ChangeNotifier {
   LatLng lokasiAwal = const LatLng(0.0, 0.0);
   List<LatLng> titikTujuan = [];
   List<LatLng> listTitikTujuan = [];
+  List<LatLng> listTitikTujuan2 = [];
   Polyline? jalurRute;
   bool _isLoading = true;
   bool _isLoading1 = true;
@@ -32,9 +33,19 @@ class OSMScreenProvider extends ChangeNotifier {
   StreamSubscription<Position>? _positionStreamSubscription;
   Timer? _pollingTimer;
   double _totalJarak = 0.0;
-  String _waktuTempuh = '';
+  String _waktuTempuh = '0';
   double _lastTotalJarak = 0.0;
   String _lastWaktuTempuh = '0';
+
+  double _totalJarak2 = 0.0;
+  String _waktuTempuh2 = '0';
+  double _lastTotalJarak2 = 0.0;
+  String _lastWaktuTempuh2 = '0';
+
+  double _totalJarak3 = 0.0;
+  String _waktuTempuh3 = '0';
+  double _lastTotalJarak3 = 0.0;
+  String _lastWaktuTempuh3 = '0';
 
   bool get isloading => _isLoading;
   bool get isloading1 => _isLoading1;
@@ -42,6 +53,12 @@ class OSMScreenProvider extends ChangeNotifier {
   double get totalJarak => _lastTotalJarak;
   String get waktuTempuh => _lastWaktuTempuh;
   bool get cekDataPengantaran => dataPengantaran.isEmpty;
+
+  double get totalJarak2 => _lastTotalJarak2;
+  String get waktuTempuh2 => _lastWaktuTempuh2;
+
+  double get totalJarak3 => _lastTotalJarak3;
+  String get waktuTempuh3 => _lastWaktuTempuh3;
 
   OSMScreenProvider(this.globalkey, this.context, this.idKurir) {
     mapController = MapController();
@@ -74,9 +91,12 @@ class OSMScreenProvider extends ChangeNotifier {
     fetchedCoordinates =
         _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
     titikTujuan = [titikAwal, fetchedCoordinates[0]];
-    listTitikTujuan = [titikAwal, ...fetchedCoordinates];
+    listTitikTujuan = [fetchedCoordinates[0], fetchedCoordinates[1]];
+    listTitikTujuan2 = [fetchedCoordinates[1], fetchedCoordinates[2]];
     _buatPolyline();
     _hitungTotalJarak();
+    _hitungTotalJarak2();
+    _hitungTotalJarak3();
     _lokasiAlamat(titikAwal);
   }
 
@@ -172,6 +192,63 @@ class OSMScreenProvider extends ChangeNotifier {
     if (_totalJarak != _lastTotalJarak || _waktuTempuh != _lastWaktuTempuh) {
       _lastTotalJarak = _totalJarak;
       _lastWaktuTempuh = _waktuTempuh;
+      _isLoading1 = false;
+      safeNotifyListeners();
+    }
+  }
+
+  void _hitungTotalJarak2() async {
+    _totalJarak2 = 0.0;
+    for (int i = 0; i < listTitikTujuan.length - 1; i++) {
+      final route = await _getRoute(listTitikTujuan[i], listTitikTujuan[i + 1]);
+      if (route != null) {
+        for (int j = 0; j < route.length - 1; j++) {
+          _totalJarak2 += Geolocator.distanceBetween(
+            route[j].latitude,
+            route[j].longitude,
+            route[j + 1].latitude,
+            route[j + 1].longitude,
+          );
+        }
+      }
+    }
+    _totalJarak2 /= 1000;
+
+    _waktuTempuh2 = calculateTravelTime(_totalJarak2, 30.0);
+
+    if (_totalJarak2 != _lastTotalJarak2 ||
+        _waktuTempuh2 != _lastWaktuTempuh2) {
+      _lastTotalJarak2 = _totalJarak2;
+      _lastWaktuTempuh2 = _waktuTempuh2;
+      _isLoading1 = false;
+      safeNotifyListeners();
+    }
+  }
+
+  void _hitungTotalJarak3() async {
+    _totalJarak3 = 0.0;
+    for (int i = 0; i < listTitikTujuan2.length - 1; i++) {
+      final route =
+          await _getRoute(listTitikTujuan2[i], listTitikTujuan2[i + 1]);
+      if (route != null) {
+        for (int j = 0; j < route.length - 1; j++) {
+          _totalJarak3 += Geolocator.distanceBetween(
+            route[j].latitude,
+            route[j].longitude,
+            route[j + 1].latitude,
+            route[j + 1].longitude,
+          );
+        }
+      }
+    }
+    _totalJarak3 /= 1000;
+
+    _waktuTempuh3 = calculateTravelTime(_totalJarak3, 30.0);
+
+    if (_totalJarak3 != _lastTotalJarak3 ||
+        _waktuTempuh3 != _lastWaktuTempuh3) {
+      _lastTotalJarak3 = _totalJarak3;
+      _lastWaktuTempuh3 = _waktuTempuh3;
       _isLoading1 = false;
       safeNotifyListeners();
     }
@@ -314,7 +391,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     const String apiKey =
-        '5b3ce3597851110001cf62484af84b34bc524b7196b943c9bdef5882';
+        '5b3ce3597851110001cf6248167166d78c714b14831ad77a268357ba';
     final String url =
         'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 

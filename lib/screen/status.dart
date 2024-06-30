@@ -154,6 +154,13 @@ class _StatusScreenState extends State<StatusScreen> {
                       height: 15,
                     ),
                     const Divider(),
+                    Text(
+                      'Pengantaran Sekarang',
+                      style: TextStyle(
+                          color: mycolor.color1,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold),
+                    ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -181,7 +188,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                 ),
                               ),
                               provider.isloading1
-                                  ? const Divider()
+                                  ? const Text('Sedang mencari lokasi...')
                                   : Text(
                                       provider.prediksiAlamat,
                                       style: const TextStyle(fontSize: 18),
@@ -201,7 +208,7 @@ class _StatusScreenState extends State<StatusScreen> {
                           padding: const EdgeInsets.all(2),
                           child: Icon(
                             Icons.location_on_rounded,
-                            color: mycolor.color1,
+                            color: mycolor.color4,
                             size: 25,
                           ),
                         ),
@@ -276,7 +283,6 @@ class _StatusScreenState extends State<StatusScreen> {
                         ),
                       ],
                     ),
-                    const Divider(),
                     Row(
                       children: [
                         Padding(
@@ -328,6 +334,268 @@ class _StatusScreenState extends State<StatusScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ],
+                    ),
+                    const Divider(),
+                    Text(
+                      'Pengantaran Selanjutnya',
+                      style: TextStyle(
+                          color: mycolor.color1,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Expanded(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...provider.listTitikTujuan.map((latLng) {
+                              print('LatLng: $latLng');
+                              var data = provider.dataPengantaran.firstWhere(
+                                (item) {
+                                  bool match =
+                                      item['latitude'] == latLng.latitude &&
+                                          item['longitude'] == latLng.longitude;
+                                  print(
+                                      'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
+                                  return match;
+                                },
+                                orElse: () => null,
+                              );
+
+                              return data != null
+                                  ? Column(
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(2),
+                                              child: Icon(
+                                                Icons.location_on_rounded,
+                                                color: mycolor.color4,
+                                                size: 25,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Rencana Lokasi Pengiriman',
+                                                  style: TextStyle(
+                                                    fontSize: 25,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                    '${data['Alamat_Tujuan'] ?? '-'}',
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                    )),
+                                              ],
+                                            )),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  : const SizedBox();
+                            }).toList(),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Icon(
+                                    Icons.map,
+                                    color: mycolor.color1,
+                                    size: 25,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  provider.isloading1
+                                      ? 'Jarak Tempuh'
+                                      : 'Jarak ${provider.totalJarak2.toStringAsFixed(1)} km',
+                                  style: TextStyle(
+                                    color: mycolor.color1,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Icon(
+                                    Icons.watch_later_outlined,
+                                    color: mycolor.color1,
+                                    size: 25,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  provider.isloading1
+                                      ? 'Waktu Tempuh'
+                                      : 'Waktu ${provider.waktuTempuh2} menit',
+                                  style: TextStyle(
+                                    color: mycolor.color1,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Divider(),
+                          ],
+                        )),
+                      ],
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Expanded(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...provider.listTitikTujuan.map((latLng) {
+                              print('LatLng: $latLng');
+                              var data = provider.dataPengantaran.firstWhere(
+                                (item) {
+                                  bool match =
+                                      item['latitude'] == latLng.latitude &&
+                                          item['longitude'] == latLng.longitude;
+                                  print(
+                                      'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
+                                  return match;
+                                },
+                                orElse: () => null,
+                              );
+
+                              return data != null
+                                  ? Column(
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(2),
+                                              child: Icon(
+                                                Icons.location_on_rounded,
+                                                color: mycolor.color4,
+                                                size: 25,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Rencana Lokasi Pengiriman',
+                                                  style: TextStyle(
+                                                    fontSize: 25,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                    '${data['Alamat_Tujuan'] ?? '-'}',
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                    )),
+                                              ],
+                                            )),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  : const SizedBox();
+                            }).toList(),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Icon(
+                                    Icons.map,
+                                    color: mycolor.color1,
+                                    size: 25,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  provider.isloading1
+                                      ? 'Jarak Tempuh'
+                                      : 'Jarak ${provider.totalJarak3.toStringAsFixed(1)} km',
+                                  style: TextStyle(
+                                    color: mycolor.color1,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Icon(
+                                    Icons.watch_later_outlined,
+                                    color: mycolor.color1,
+                                    size: 25,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  provider.isloading1
+                                      ? 'Waktu Tempuh'
+                                      : 'Waktu ${provider.waktuTempuh3} menit',
+                                  style: TextStyle(
+                                    color: mycolor.color1,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Divider(),
+                          ],
+                        ))
                       ],
                     ),
                     const SizedBox(
