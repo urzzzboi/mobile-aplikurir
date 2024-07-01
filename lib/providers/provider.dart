@@ -110,7 +110,8 @@ class OSMScreenProvider extends ChangeNotifier {
         await _ambilDataKurir.fetchCoordinates(idKurir);
     fetchedCoordinates =
         _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
-    titikTujuan = [titikAwal, fetchedCoordinates[0]];
+    // titikTujuan = [titikAwal, fetchedCoordinates[0]];
+    titikTujuan = [titikAwal, ...fetchedCoordinates];
 
     _buatPolyline();
     _hitungTotalJarak();

@@ -349,7 +349,7 @@ class _StatusScreenState extends State<StatusScreen> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Expanded(
@@ -470,7 +470,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                   ),
                                 ],
                               ),
-                              Divider(),
+                              const Divider(),
                             ],
                           )),
                         ],
@@ -479,7 +479,7 @@ class _StatusScreenState extends State<StatusScreen> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Expanded(
@@ -600,7 +600,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                   ),
                                 ],
                               ),
-                              Divider(),
+                              const Divider(),
                             ],
                           )),
                         ],
@@ -609,7 +609,7 @@ class _StatusScreenState extends State<StatusScreen> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Expanded(
@@ -730,7 +730,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                   ),
                                 ],
                               ),
-                              Divider(),
+                              const Divider(),
                             ],
                           )),
                         ],
@@ -739,7 +739,7 @@ class _StatusScreenState extends State<StatusScreen> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Expanded(
@@ -860,7 +860,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                   ),
                                 ],
                               ),
-                              Divider(),
+                              const Divider(),
                             ],
                           )),
                         ],
