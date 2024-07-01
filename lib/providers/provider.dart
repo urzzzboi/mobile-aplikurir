@@ -381,10 +381,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
       jalurRute = Polyline(
         gradientColors: [
-          Colors.red,
-          Colors.yellow,
-          Colors.green,
-          Colors.blue,
+          Colors.cyan,
         ],
         points: polylinePoints,
         color: Colors.blue,
