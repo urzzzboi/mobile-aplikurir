@@ -337,14 +337,15 @@ class _StatusScreenState extends State<StatusScreen> {
                       ],
                     ),
                     const Divider(),
-                    Text(
-                      'Pengantaran Selanjutnya',
-                      style: TextStyle(
-                          color: mycolor.color1,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    if (provider.listTitikTujuan.isNotEmpty)
+                    if (provider.listTitikTujuan2.isNotEmpty)
+                      Text(
+                        'Pengantaran Selanjutnya',
+                        style: TextStyle(
+                            color: mycolor.color1,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    if (provider.listTitikTujuan2.isNotEmpty)
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -355,7 +356,7 @@ class _StatusScreenState extends State<StatusScreen> {
                               child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ...provider.listTitikTujuan.map((latLng) {
+                              ...provider.listTitikTujuan2.map((latLng) {
                                 print('LatLng: $latLng');
                                 var data = provider.dataPengantaran.firstWhere(
                                   (item) {
@@ -474,7 +475,7 @@ class _StatusScreenState extends State<StatusScreen> {
                           )),
                         ],
                       ),
-                    if (provider.listTitikTujuan2.isNotEmpty)
+                    if (provider.listTitikTujuan3.isNotEmpty)
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -485,7 +486,7 @@ class _StatusScreenState extends State<StatusScreen> {
                               child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ...provider.listTitikTujuan2.map((latLng) {
+                              ...provider.listTitikTujuan3.map((latLng) {
                                 print('LatLng: $latLng');
                                 var data = provider.dataPengantaran.firstWhere(
                                   (item) {
@@ -601,7 +602,7 @@ class _StatusScreenState extends State<StatusScreen> {
                               ),
                               Divider(),
                             ],
-                          ))
+                          )),
                         ],
                       ),
                     const SizedBox(

@@ -155,7 +155,7 @@ class _MapScreenState extends State<MapScreen> {
           mapController: provider.mapController,
           options: MapOptions(
             initialCenter: provider.titikAwal,
-            initialZoom: 14,
+            initialZoom: 17,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
             ),

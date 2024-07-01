@@ -22,9 +22,11 @@ class OSMScreenProvider extends ChangeNotifier {
   Map<String, dynamic>? dataPenerima;
   LatLng titikAwal = const LatLng(0.0, 0.0);
   LatLng lokasiAwal = const LatLng(0.0, 0.0);
+
   List<LatLng> titikTujuan = [];
-  List<LatLng> listTitikTujuan = [];
   List<LatLng> listTitikTujuan2 = [];
+  List<LatLng> listTitikTujuan3 = [];
+
   Polyline? jalurRute;
   bool _isLoading = true;
   bool _isLoading1 = true;
@@ -95,9 +97,11 @@ class OSMScreenProvider extends ChangeNotifier {
     _buatPolyline();
     _hitungTotalJarak();
     _lokasiAlamat(titikAwal);
-    listTitikTujuan = [fetchedCoordinates[0], fetchedCoordinates[1]];
-    listTitikTujuan2 = [fetchedCoordinates[1], fetchedCoordinates[2]];
+
+    listTitikTujuan2 = [fetchedCoordinates[0], fetchedCoordinates[1]];
     _hitungTotalJarak2();
+
+    listTitikTujuan3 = [fetchedCoordinates[1], fetchedCoordinates[2]];
     _hitungTotalJarak3();
   }
 
@@ -200,8 +204,9 @@ class OSMScreenProvider extends ChangeNotifier {
 
   void _hitungTotalJarak2() async {
     _totalJarak2 = 0.0;
-    for (int i = 0; i < listTitikTujuan.length - 1; i++) {
-      final route = await _getRoute(listTitikTujuan[i], listTitikTujuan[i + 1]);
+    for (int i = 0; i < listTitikTujuan2.length - 1; i++) {
+      final route =
+          await _getRoute(listTitikTujuan2[i], listTitikTujuan2[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak2 += Geolocator.distanceBetween(
@@ -228,9 +233,9 @@ class OSMScreenProvider extends ChangeNotifier {
 
   void _hitungTotalJarak3() async {
     _totalJarak3 = 0.0;
-    for (int i = 0; i < listTitikTujuan2.length - 1; i++) {
+    for (int i = 0; i < listTitikTujuan3.length - 1; i++) {
       final route =
-          await _getRoute(listTitikTujuan2[i], listTitikTujuan2[i + 1]);
+          await _getRoute(listTitikTujuan3[i], listTitikTujuan3[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak3 += Geolocator.distanceBetween(
