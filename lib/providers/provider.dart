@@ -26,6 +26,8 @@ class OSMScreenProvider extends ChangeNotifier {
   List<LatLng> titikTujuan = [];
   List<LatLng> listTitikTujuan2 = [];
   List<LatLng> listTitikTujuan3 = [];
+  List<LatLng> listTitikTujuan4 = [];
+  List<LatLng> listTitikTujuan5 = [];
 
   Polyline? jalurRute;
   bool _isLoading = true;
@@ -49,6 +51,16 @@ class OSMScreenProvider extends ChangeNotifier {
   double _lastTotalJarak3 = 0.0;
   String _lastWaktuTempuh3 = '0';
 
+  double _totalJarak4 = 0.0;
+  String _waktuTempuh4 = '0';
+  double _lastTotalJarak4 = 0.0;
+  String _lastWaktuTempuh4 = '0';
+
+  double _totalJarak5 = 0.0;
+  String _waktuTempuh5 = '0';
+  double _lastTotalJarak5 = 0.0;
+  String _lastWaktuTempuh5 = '0';
+
   bool get isloading => _isLoading;
   bool get isloading1 => _isLoading1;
   String get prediksiAlamat => _prediksiAlamat;
@@ -61,6 +73,12 @@ class OSMScreenProvider extends ChangeNotifier {
 
   double get totalJarak3 => _lastTotalJarak3;
   String get waktuTempuh3 => _lastWaktuTempuh3;
+
+  double get totalJarak4 => _lastTotalJarak4;
+  String get waktuTempuh4 => _lastWaktuTempuh4;
+
+  double get totalJarak5 => _lastTotalJarak5;
+  String get waktuTempuh5 => _lastWaktuTempuh5;
 
   OSMScreenProvider(this.globalkey, this.context, this.idKurir) {
     mapController = MapController();
@@ -103,6 +121,12 @@ class OSMScreenProvider extends ChangeNotifier {
 
     listTitikTujuan3 = [fetchedCoordinates[1], fetchedCoordinates[2]];
     _hitungTotalJarak3();
+
+    listTitikTujuan4 = [fetchedCoordinates[2], fetchedCoordinates[3]];
+    _hitungTotalJarak4();
+
+    listTitikTujuan5 = [fetchedCoordinates[3], fetchedCoordinates[4]];
+    _hitungTotalJarak5();
   }
 
   Future<void> updateStatus(String status, String waktu, String tanggal,
@@ -255,6 +279,64 @@ class OSMScreenProvider extends ChangeNotifier {
         _waktuTempuh3 != _lastWaktuTempuh3) {
       _lastTotalJarak3 = _totalJarak3;
       _lastWaktuTempuh3 = _waktuTempuh3;
+      _isLoading1 = false;
+      safeNotifyListeners();
+    }
+  }
+
+  void _hitungTotalJarak4() async {
+    _totalJarak4 = 0.0;
+    for (int i = 0; i < listTitikTujuan4.length - 1; i++) {
+      final route =
+          await _getRoute(listTitikTujuan4[i], listTitikTujuan4[i + 1]);
+      if (route != null) {
+        for (int j = 0; j < route.length - 1; j++) {
+          _totalJarak4 += Geolocator.distanceBetween(
+            route[j].latitude,
+            route[j].longitude,
+            route[j + 1].latitude,
+            route[j + 1].longitude,
+          );
+        }
+      }
+    }
+    _totalJarak4 /= 1000;
+
+    _waktuTempuh4 = calculateTravelTime(_totalJarak4, 30.0);
+
+    if (_totalJarak4 != _lastTotalJarak4 ||
+        _waktuTempuh4 != _lastWaktuTempuh4) {
+      _lastTotalJarak4 = _totalJarak4;
+      _lastWaktuTempuh4 = _waktuTempuh4;
+      _isLoading1 = false;
+      safeNotifyListeners();
+    }
+  }
+
+  void _hitungTotalJarak5() async {
+    _totalJarak5 = 0.0;
+    for (int i = 0; i < listTitikTujuan5.length - 1; i++) {
+      final route =
+          await _getRoute(listTitikTujuan5[i], listTitikTujuan5[i + 1]);
+      if (route != null) {
+        for (int j = 0; j < route.length - 1; j++) {
+          _totalJarak5 += Geolocator.distanceBetween(
+            route[j].latitude,
+            route[j].longitude,
+            route[j + 1].latitude,
+            route[j + 1].longitude,
+          );
+        }
+      }
+    }
+    _totalJarak5 /= 1000;
+
+    _waktuTempuh5 = calculateTravelTime(_totalJarak5, 30.0);
+
+    if (_totalJarak5 != _lastTotalJarak5 ||
+        _waktuTempuh5 != _lastWaktuTempuh5) {
+      _lastTotalJarak5 = _totalJarak5;
+      _lastWaktuTempuh5 = _waktuTempuh5;
       _isLoading1 = false;
       safeNotifyListeners();
     }
