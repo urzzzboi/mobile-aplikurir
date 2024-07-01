@@ -91,13 +91,14 @@ class OSMScreenProvider extends ChangeNotifier {
     fetchedCoordinates =
         _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
     titikTujuan = [titikAwal, fetchedCoordinates[0]];
-    listTitikTujuan = [fetchedCoordinates[0], fetchedCoordinates[1]];
-    listTitikTujuan2 = [fetchedCoordinates[1], fetchedCoordinates[2]];
+
     _buatPolyline();
     _hitungTotalJarak();
+    _lokasiAlamat(titikAwal);
+    listTitikTujuan = [fetchedCoordinates[0], fetchedCoordinates[1]];
+    listTitikTujuan2 = [fetchedCoordinates[1], fetchedCoordinates[2]];
     _hitungTotalJarak2();
     _hitungTotalJarak3();
-    _lokasiAlamat(titikAwal);
   }
 
   Future<void> updateStatus(String status, String waktu, String tanggal,
@@ -374,6 +375,7 @@ class OSMScreenProvider extends ChangeNotifier {
       }
 
       jalurRute = Polyline(
+        gradientColors: [Colors.amber, Colors.black, Colors.red],
         points: polylinePoints,
         color: Colors.blue,
         borderColor: Colors.black,
@@ -400,16 +402,16 @@ class OSMScreenProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final List coordinates = data['features'][0]['geometry']['coordinates'];
-        print('Route coordinates: $coordinates');
+        print('Koodinat Posisi Awal: $coordinates');
         return coordinates.map((coord) {
           return LatLng(coord[1], coord[0]);
         }).toList();
       } else {
-        print('Failed to get route: ${response.statusCode}');
+        print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print("Error retrieving route: $e");
+      print("Error pengambilan posisi awal karena $e");
       return null;
     }
   }
