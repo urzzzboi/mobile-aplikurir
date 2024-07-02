@@ -489,7 +489,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     const String apiKey =
-        '5b3ce3597851110001cf62483c29abf68d7c4c7aba3e439cdbd83b15';
+        '5b3ce3597851110001cf6248560f941fbffd4c62b15828a41a77e825';
     final String url =
         'https://api.openrouteservice.org/v2/directions/cycling-road?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
