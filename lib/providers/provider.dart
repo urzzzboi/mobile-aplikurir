@@ -396,7 +396,8 @@ class OSMScreenProvider extends ChangeNotifier {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      titikAwal = LatLng(3.587524337896047, 98.69072537914792);
       print('Posisi sekarang: $titikAwal');
       await _fetchCoordinatesAndBuildRoute();
       _positionStreamSubscription = Geolocator.getPositionStream(
