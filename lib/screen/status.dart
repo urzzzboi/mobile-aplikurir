@@ -243,7 +243,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                       ),
                                     ),
                                     ...provider.titikTujuan.map((latLng) {
-                                      print('LatLng: $latLng');
+                                      // print('LatLng: $latLng');
                                       var data =
                                           provider.dataPengantaran.firstWhere(
                                         (item) {
@@ -251,8 +251,8 @@ class _StatusScreenState extends State<StatusScreen> {
                                                   latLng.latitude &&
                                               item['longitude'] ==
                                                   latLng.longitude;
-                                          print(
-                                              'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
+                                          // print(
+                                          //     'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
                                           return match;
                                         },
                                         orElse: () => null,
@@ -380,7 +380,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     ...provider.listTitikTujuan2.map((latLng) {
-                                      print('LatLng: $latLng');
+                                      // print('LatLng: $latLng');
                                       var data =
                                           provider.dataPengantaran.firstWhere(
                                         (item) {
@@ -388,8 +388,8 @@ class _StatusScreenState extends State<StatusScreen> {
                                                   latLng.latitude &&
                                               item['longitude'] ==
                                                   latLng.longitude;
-                                          print(
-                                              'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
+                                          // print(
+                                          //     'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
                                           return match;
                                         },
                                         orElse: () => null,
@@ -516,7 +516,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     ...provider.listTitikTujuan3.map((latLng) {
-                                      print('LatLng: $latLng');
+                                      // print('LatLng: $latLng');
                                       var data =
                                           provider.dataPengantaran.firstWhere(
                                         (item) {
@@ -524,8 +524,8 @@ class _StatusScreenState extends State<StatusScreen> {
                                                   latLng.latitude &&
                                               item['longitude'] ==
                                                   latLng.longitude;
-                                          print(
-                                              'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
+                                          // print(
+                                          //     'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
                                           return match;
                                         },
                                         orElse: () => null,
@@ -652,7 +652,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     ...provider.listTitikTujuan4.map((latLng) {
-                                      print('LatLng: $latLng');
+                                      // print('LatLng: $latLng');
                                       var data =
                                           provider.dataPengantaran.firstWhere(
                                         (item) {
@@ -660,8 +660,8 @@ class _StatusScreenState extends State<StatusScreen> {
                                                   latLng.latitude &&
                                               item['longitude'] ==
                                                   latLng.longitude;
-                                          print(
-                                              'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
+                                          // print(
+                                          //     'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
                                           return match;
                                         },
                                         orElse: () => null,
@@ -788,7 +788,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     ...provider.listTitikTujuan5.map((latLng) {
-                                      print('LatLng: $latLng');
+                                      // print('LatLng: $latLng');
                                       var data =
                                           provider.dataPengantaran.firstWhere(
                                         (item) {
@@ -796,8 +796,8 @@ class _StatusScreenState extends State<StatusScreen> {
                                                   latLng.latitude &&
                                               item['longitude'] ==
                                                   latLng.longitude;
-                                          print(
-                                              'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
+                                          // print(
+                                          //     'Checking: ${item['latitude']}, ${item['longitude']} with $latLng => Match: $match');
                                           return match;
                                         },
                                         orElse: () => null,
