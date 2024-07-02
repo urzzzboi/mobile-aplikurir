@@ -32,6 +32,7 @@ class OSMScreenProvider extends ChangeNotifier {
   Polyline? jalurRute;
   bool _isLoading = true;
   bool _isLoading1 = true;
+  bool _isLoading2 = true;
   bool _isDisposed = false;
 
   StreamSubscription<Position>? _positionStreamSubscription;
@@ -63,6 +64,8 @@ class OSMScreenProvider extends ChangeNotifier {
 
   bool get isloading => _isLoading;
   bool get isloading1 => _isLoading1;
+  bool get isloading2 => _isLoading2;
+
   String get prediksiAlamat => _prediksiAlamat;
   double get totalJarak => _lastTotalJarak;
   String get waktuTempuh => _lastWaktuTempuh;
@@ -218,7 +221,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak /= 1000;
 
     _waktuTempuh = calculateTravelTime(_totalJarak, 30.0);
-
+    _isLoading2 = false;
     if (_totalJarak != _lastTotalJarak || _waktuTempuh != _lastWaktuTempuh) {
       _lastTotalJarak = _totalJarak;
       _lastWaktuTempuh = _waktuTempuh;
