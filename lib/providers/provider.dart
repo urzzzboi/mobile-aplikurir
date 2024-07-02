@@ -491,7 +491,7 @@ class OSMScreenProvider extends ChangeNotifier {
     const String apiKey =
         '5b3ce3597851110001cf62483c29abf68d7c4c7aba3e439cdbd83b15';
     final String url =
-        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));
