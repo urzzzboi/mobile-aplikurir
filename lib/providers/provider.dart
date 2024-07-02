@@ -396,9 +396,10 @@ class OSMScreenProvider extends ChangeNotifier {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-      titikAwal = const LatLng(3.587524, 98.690725);
+      titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      // titikAwal = const LatLng(3.587524, 98.690725);
       print('Posisi sekarang: $titikAwal');
+      print('GPS BERJALAN');
       await _fetchCoordinatesAndBuildRoute();
       _positionStreamSubscription = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
@@ -512,7 +513,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
   void startDelivery() {
     _buatPolyline();
-    _isLoading = false;
   }
 
   void cancelDelivery() {
