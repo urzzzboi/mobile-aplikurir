@@ -13,21 +13,33 @@ class Node {
 
 class AlgoritmaAStar {
   List<LatLng> urutkanDenganAStar(LatLng start, List<LatLng> points) {
+    List<LatLng> hasilHitungan = [];
+    LatLng currentStart = start;
+
+    while (points.isNotEmpty) {
+      Node? current = findShortestPath(currentStart, points);
+      if (current != null) {
+        hasilHitungan.add(current.point);
+        points.remove(current.point);
+        currentStart = current.point;
+      } else {
+        break;
+      }
+    }
+
+    return hasilHitungan;
+  }
+
+  Node? findShortestPath(LatLng start, List<LatLng> points) {
     List<Node> openList = [Node(start, 0, 0, 0)];
     List<LatLng> closedList = [];
-    List<LatLng> hasilHitungan = [];
 
     while (openList.isNotEmpty) {
       Node current = openList.reduce((a, b) => a.f < b.f ? a : b);
       openList.remove(current);
 
       if (points.contains(current.point)) {
-        points.remove(current.point);
-        hasilHitungan.add(current.point);
-
-        openList = [Node(current.point, 0, 0, 0)];
-        closedList = [];
-        continue;
+        return current;
       }
 
       closedList.add(current.point);
@@ -49,7 +61,7 @@ class AlgoritmaAStar {
       }
     }
 
-    return hasilHitungan;
+    return null;
   }
 
   double hitungHeuristic(LatLng a, LatLng b) {
