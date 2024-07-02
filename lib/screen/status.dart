@@ -250,6 +250,10 @@ class _StatusScreenState extends State<StatusScreen> {
                                               style: const TextStyle(
                                                 fontSize: 18,
                                               )),
+                                          Text('${data['Deskripsi']}',
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                              )),
                                           const Divider(),
                                           Text('Penerima : ',
                                               style: TextStyle(
