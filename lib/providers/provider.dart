@@ -94,14 +94,14 @@ class OSMScreenProvider extends ChangeNotifier {
   Future<void> _fetchDataPengantaran() async {
     try {
       dataPengantaran = await _ambilDataKurir.fetchDataPengantaran(idKurir);
-      print('Data pengantaran berhasil diambil: $dataPengantaran');
-      print(cekDataPengantaran);
+      // print('Data pengantaran berhasil diambil: $dataPengantaran');
+      // print(cekDataPengantaran);
       if (dataPengantaran.isEmpty) {
-        print('Data tidak bisa diambil');
+        // print('Data tidak bisa diambil');
       }
     } catch (e) {
-      print("Tidak bisa mengambil data: ${e.toString()}");
-      print('Error: $e');
+      // print("Tidak bisa mengambil data: ${e.toString()}");
+      // print('Error: $e');
     } finally {
       _isLoading = false;
       safeNotifyListeners();
@@ -167,14 +167,14 @@ class OSMScreenProvider extends ChangeNotifier {
         );
 
         if (response.statusCode == 201) {
-          print('Status OK: $status');
+          // print('Status OK: $status');
           if (status == 'Selesai') {
             final id = selectedData['Id_pengantaran_paket'];
             final deleteResponse = await http.delete(
                 Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
                 headers: {'Content-Type': 'application/json'});
             if (deleteResponse.statusCode == 200) {
-              print('Data pengantaran paket berhasil dihapus.');
+              // print('Data pengantaran paket berhasil dihapus.');
             } else {
               print(
                   'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
@@ -186,20 +186,20 @@ class OSMScreenProvider extends ChangeNotifier {
                 Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
                 headers: {'Content-Type': 'application/json'});
             if (deleteResponse.statusCode == 200) {
-              print('Data pengantaran paket berhasil dihapus.');
+              // print('Data pengantaran paket berhasil dihapus.');
             } else {
               print(
                   'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
             }
           }
         } else {
-          print('Data tidak masuk karena: ${response.statusCode}');
+          // print('Data tidak masuk karena: ${response.statusCode}');
         }
       } else {
-        print('Data tidak ditemukan');
+        // print('Data tidak ditemukan');
       }
     } catch (e) {
-      print('Error: $e');
+      // print('Error: $e');
     }
   }
 
@@ -365,9 +365,9 @@ class OSMScreenProvider extends ChangeNotifier {
       if (await Permission.location.request().isGranted) {
         await _ambilPosisiTengah();
       } else if (status.isDenied) {
-        print('Izin Lokasi ditolak');
+        // print('Izin Lokasi ditolak');
       } else if (status.isPermanentlyDenied) {
-        print('Izinkan Lokasi terlebih dahulu');
+        // print('Izinkan Lokasi terlebih dahulu');
       }
     }
   }
@@ -377,28 +377,28 @@ class OSMScreenProvider extends ChangeNotifier {
     LocationPermission permission;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      print("Lokasi dinonaktifkan");
+      // print("Lokasi dinonaktifkan");
       return;
     }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        print("Akses Lokasi Ditolak");
+        // print("Akses Lokasi Ditolak");
         return;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      print("Akses Lokasi Ditolak secara Permanen");
+      // print("Akses Lokasi Ditolak secara Permanen");
       return;
     }
     try {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-      // titikAwal = const LatLng(3.587524, 98.690725);
-      print('Posisi sekarang: $titikAwal');
+      // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      titikAwal = const LatLng(3.587524, 98.690725);
+      // print('Posisi sekarang: $titikAwal');
       print('GPS BERJALAN');
       await _fetchCoordinatesAndBuildRoute();
       _positionStreamSubscription = Geolocator.getPositionStream(
@@ -411,15 +411,15 @@ class OSMScreenProvider extends ChangeNotifier {
       });
       safeNotifyListeners();
     } catch (e) {
-      print("Tidak bisa ambil tengah karena $e");
+      // print("Tidak bisa ambil tengah karena $e");
     }
   }
 
   void handlePositionChange(MapCamera latLng, bool hasGesture) {
-    print('Current Location: $lokasiAwal, New Location: ${latLng.center}');
+    // print('Current Location: $lokasiAwal, New Location: ${latLng.center}');
     if (lokasiAwal != latLng.center) {
       lokasiAwal = latLng.center;
-      print('Location updated to: $lokasiAwal');
+      // print('Location updated to: $lokasiAwal');
       if (!_isDisposed) {
         safeNotifyListeners();
       }
@@ -446,10 +446,10 @@ class OSMScreenProvider extends ChangeNotifier {
         _prediksiAlamat = "Alamat tidak ditemukan";
       }
     } catch (e) {
-      print('$e');
+      // print('$e');
       _prediksiAlamat = "";
     }
-    print('Alamat yang diprediksi: $_prediksiAlamat');
+    // print('Alamat yang diprediksi: $_prediksiAlamat');
     if (!_isDisposed) {
       safeNotifyListeners();
     }
@@ -477,7 +477,8 @@ class OSMScreenProvider extends ChangeNotifier {
         borderStrokeWidth: 2,
         strokeWidth: 5,
       );
-      print('Polyline dibuat dengan poin: $polylinePoints');
+      // print('Polyline dibuat dengan poin: $polylinePoints');
+      _totalJarak = polylinePoints.length.toDouble();
     } else {
       jalurRute = null;
       _totalJarak = 0.0;
@@ -497,16 +498,16 @@ class OSMScreenProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final List coordinates = data['features'][0]['geometry']['coordinates'];
-        print('Koodinat Posisi Awal: $coordinates');
+        // print('Koodinat Posisi Awal: $coordinates');
         return coordinates.map((coord) {
           return LatLng(coord[1], coord[0]);
         }).toList();
       } else {
-        print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
+        // print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print("Error pengambilan posisi awal karena $e");
+      // print("Error pengambilan posisi awal karena $e");
       return null;
     }
   }

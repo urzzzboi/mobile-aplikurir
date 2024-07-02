@@ -819,7 +819,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                                       child: Icon(
                                                         Icons
                                                             .location_on_rounded,
-                                                        color: mycolor.color5,
+                                                        color: mycolor.color4,
                                                         size: 25,
                                                       ),
                                                     ),
