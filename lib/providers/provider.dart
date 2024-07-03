@@ -62,6 +62,9 @@ class OSMScreenProvider extends ChangeNotifier {
   double _lastTotalJarak5 = 0.0;
   String _lastWaktuTempuh5 = '0';
 
+  bool _isLoadingRoute = false;
+  bool get isLoadingRoute => _isLoadingRoute;
+
   bool get isloading => _isLoading;
   bool get isloading1 => _isLoading1;
   bool get isloading2 => _isLoading2;
@@ -456,64 +459,73 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   void _buatPolyline() async {
-    if (titikTujuan.isNotEmpty && titikTujuan.length > 1) {
-      final List<LatLng> polylinePoints = [];
-      for (int i = 0; i < titikTujuan.length - 1; i++) {
-        final LatLng start = titikTujuan[i];
-        final LatLng end = titikTujuan[i + 1];
-        final route = await _getRoute(start, end);
-        if (route != null) {
-          polylinePoints.addAll(route);
-        }
-      }
-
-      jalurRute = Polyline(
-        gradientColors: [
-          Colors.cyan,
-        ],
-        points: polylinePoints,
-        color: Colors.blue,
-        borderColor: Colors.black,
-        borderStrokeWidth: 2,
-        strokeWidth: 5,
-      );
-      // print('Polyline dibuat dengan poin: $polylinePoints');
-      _totalJarak = polylinePoints.length.toDouble();
-    } else {
-      jalurRute = null;
-      _totalJarak = 0.0;
-    }
-    _isLoading = false;
+    _isLoadingRoute = true;
     safeNotifyListeners();
+    try {
+      if (titikTujuan.isNotEmpty && titikTujuan.length > 1) {
+        final List<LatLng> polylinePoints = [];
+        for (int i = 0; i < titikTujuan.length - 1; i++) {
+          final LatLng start = titikTujuan[i];
+          final LatLng end = titikTujuan[i + 1];
+          final route = await _getRoute(start, end);
+          if (route != null) {
+            polylinePoints.addAll(route);
+          }
+        }
+
+        jalurRute = Polyline(
+          gradientColors: [Colors.cyan],
+          points: polylinePoints,
+          color: Colors.blue,
+          borderColor: Colors.black,
+          borderStrokeWidth: 2,
+          strokeWidth: 5,
+        );
+        _totalJarak = polylinePoints.length.toDouble();
+      } else {
+        jalurRute = null;
+        _totalJarak = 0.0;
+      }
+    } catch (e) {
+      print("Error dalam pembuatan polyline: $e");
+      jalurRute = null;
+    } finally {
+      _isLoadingRoute = false;
+      _isLoading = false;
+      safeNotifyListeners();
+    }
   }
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     const String apiKey =
-        '5b3ce3597851110001cf6248560f941fbffd4c62b15828a41a77e825';
+        '5b3ce3597851110001cf6248674fa4eb294c48fd846fa1dd7f5ddf4d';
     final String url =
         'https://api.openrouteservice.org/v2/directions/cycling-road?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
-      final response = await http.get(Uri.parse(url));
+      print("Mengambil rute dari $start ke $end");
+      final response =
+          await http.get(Uri.parse(url)).timeout(Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final List coordinates = data['features'][0]['geometry']['coordinates'];
-        // print('Koodinat Posisi Awal: $coordinates');
+        print('Koordinat diambil: $coordinates');
         return coordinates.map((coord) {
           return LatLng(coord[1], coord[0]);
         }).toList();
       } else {
-        // print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
+        print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      // print("Error pengambilan posisi awal karena $e");
+      print("Error pengambilan posisi awal karena $e");
       return null;
     }
   }
 
   void startDelivery() {
     _buatPolyline();
+    _isLoading = false;
   }
 
   void cancelDelivery() {
@@ -523,6 +535,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _pollingTimer = null;
     dataPengantaran = [];
     titikTujuan = [];
+
     _totalJarak = 0.0;
     _isLoading = true;
     _isLoading1 = true;

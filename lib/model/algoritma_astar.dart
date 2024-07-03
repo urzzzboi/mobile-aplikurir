@@ -14,14 +14,14 @@ class Node {
 class AlgoritmaAStar {
   List<LatLng> urutkanDenganAStar(LatLng start, List<LatLng> points) {
     List<LatLng> hasilHitungan = [];
-    LatLng currentStart = start;
+    LatLng ambilStart = start;
 
     while (points.isNotEmpty) {
-      Node? current = findShortestPath(currentStart, points);
-      if (current != null) {
-        hasilHitungan.add(current.point);
-        points.remove(current.point);
-        currentStart = current.point;
+      Node? jalur = cariJalurTerpendek(ambilStart, points);
+      if (jalur != null) {
+        hasilHitungan.add(jalur.point);
+        points.remove(jalur.point);
+        ambilStart = jalur.point;
       } else {
         break;
       }
@@ -30,34 +30,38 @@ class AlgoritmaAStar {
     return hasilHitungan;
   }
 
-  Node? findShortestPath(LatLng start, List<LatLng> points) {
+  Node? cariJalurTerpendek(LatLng start, List<LatLng> points) {
     List<Node> openList = [Node(start, 0, 0, 0)];
     List<LatLng> closedList = [];
 
     while (openList.isNotEmpty) {
-      Node current = openList.reduce((a, b) => a.f < b.f ? a : b);
-      openList.remove(current);
+      Node jalur = openList.reduce((a, b) => a.f < b.f ? a : b);
+      openList.remove(jalur);
 
-      if (points.contains(current.point)) {
-        return current;
+      if (points.contains(jalur.point)) {
+        return jalur;
       }
 
-      closedList.add(current.point);
+      closedList.add(jalur.point);
 
-      List<LatLng> successors =
+      List<LatLng> simpanCloseList =
           points.where((point) => !closedList.contains(point)).toList();
-      for (LatLng successor in successors) {
-        double tentativeG = current.g + jarak(current.point, successor);
-        double h = hitungHeuristic(successor, start);
-        double f = tentativeG + h;
+      for (LatLng i in simpanCloseList) {
+        double nilaiSementaraG = jalur.g + jarak(jalur.point, i);
+        double h = hitungHeuristic(i, start);
+        double f = nilaiSementaraG + h;
 
-        Node? existingNode =
-            openList.firstWhereOrNull((node) => node.point == successor);
-        if (existingNode != null && tentativeG >= existingNode.g) {
-          continue;
+        Node? nodeTerpakai =
+            openList.firstWhereOrNull((node) => node.point == i);
+        if (nodeTerpakai != null) {
+          if (nilaiSementaraG < nodeTerpakai.g) {
+            nodeTerpakai.g = nilaiSementaraG;
+            nodeTerpakai.f = f;
+            nodeTerpakai.parent = jalur;
+          }
+        } else {
+          openList.add(Node(i, nilaiSementaraG, h, f, parent: jalur));
         }
-
-        openList.add(Node(successor, tentativeG, h, f, parent: current));
       }
     }
 
