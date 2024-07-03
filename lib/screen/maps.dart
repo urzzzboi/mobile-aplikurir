@@ -41,7 +41,7 @@ class _MapScreenState extends State<MapScreen> {
             key: _scaffoldKey,
             body: Consumer<OSMScreenProvider>(
               builder: (context, provider, _) {
-                if (provider.isloading || provider.isLoadingRoute) {
+                if (provider.isloading) {
                   return _buildLoadingScreen(mycolor);
                 } else {
                   return provider.dataPengantaran.isEmpty
