@@ -28,6 +28,7 @@ class OSMScreenProvider extends ChangeNotifier {
   List<LatLng> listTitikTujuan3 = [];
   List<LatLng> listTitikTujuan4 = [];
   List<LatLng> listTitikTujuan5 = [];
+  List<LatLng> listTitikTujuan6 = [];
 
   Polyline? jalurRute;
   bool _isLoading = true;
@@ -62,6 +63,11 @@ class OSMScreenProvider extends ChangeNotifier {
   double _lastTotalJarak5 = 0.0;
   String _lastWaktuTempuh5 = '0';
 
+  double _totalJarak6 = 0.0;
+  String _waktuTempuh6 = '0';
+  double _lastTotalJarak6 = 0.0;
+  String _lastWaktuTempuh6 = '0';
+
   bool get isloading => _isLoading;
   bool get isloading1 => _isLoading1;
   bool get isloading2 => _isLoading2;
@@ -82,6 +88,9 @@ class OSMScreenProvider extends ChangeNotifier {
 
   double get totalJarak5 => _lastTotalJarak5;
   String get waktuTempuh5 => _lastWaktuTempuh5;
+
+  double get totalJarak6 => _lastTotalJarak6;
+  String get waktuTempuh6 => _lastWaktuTempuh6;
 
   OSMScreenProvider(this.globalkey, this.context, this.idKurir) {
     mapController = MapController();
@@ -112,9 +121,12 @@ class OSMScreenProvider extends ChangeNotifier {
     List<LatLng> fetchedCoordinates =
         await _ambilDataKurir.fetchCoordinates(idKurir);
     fetchedCoordinates =
-        _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
+        // _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
+        _algoritmaAStar.urutkanDenganAStar(
+            fetchedCoordinates[0], fetchedCoordinates);
     // titikTujuan = [titikAwal, fetchedCoordinates[0]];
-    titikTujuan = [titikAwal, ...fetchedCoordinates];
+    // titikTujuan = [titikAwal, ...fetchedCoordinates];
+    titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
 
     _buatPolyline();
     _hitungTotalJarak();
@@ -131,6 +143,9 @@ class OSMScreenProvider extends ChangeNotifier {
 
     listTitikTujuan5 = [fetchedCoordinates[3], fetchedCoordinates[4]];
     _hitungTotalJarak5();
+
+    listTitikTujuan6 = [fetchedCoordinates[4], fetchedCoordinates[5]];
+    _hitungTotalJarak6();
   }
 
   Future<void> updateStatus(String status, String waktu, String tanggal,
@@ -219,7 +234,6 @@ class OSMScreenProvider extends ChangeNotifier {
       }
     }
     _totalJarak /= 1000;
-
     _waktuTempuh = calculateTravelTime(_totalJarak, 30.0);
     _isLoading2 = false;
     if (_totalJarak != _lastTotalJarak || _waktuTempuh != _lastWaktuTempuh) {
@@ -346,6 +360,35 @@ class OSMScreenProvider extends ChangeNotifier {
     }
   }
 
+  void _hitungTotalJarak6() async {
+    _totalJarak6 = 0.0;
+    for (int i = 0; i < listTitikTujuan6.length - 1; i++) {
+      final route =
+          await _getRoute(listTitikTujuan6[i], listTitikTujuan6[i + 1]);
+      if (route != null) {
+        for (int j = 0; j < route.length - 1; j++) {
+          _totalJarak6 += Geolocator.distanceBetween(
+            route[j].latitude,
+            route[j].longitude,
+            route[j + 1].latitude,
+            route[j + 1].longitude,
+          );
+        }
+      }
+    }
+    _totalJarak6 /= 1000;
+
+    _waktuTempuh6 = calculateTravelTime(_totalJarak6, 30.0);
+
+    if (_totalJarak6 != _lastTotalJarak6 ||
+        _waktuTempuh6 != _lastWaktuTempuh6) {
+      _lastTotalJarak6 = _totalJarak6;
+      _lastWaktuTempuh6 = _waktuTempuh6;
+      _isLoading1 = false;
+      safeNotifyListeners();
+    }
+  }
+
   String calculateTravelTime(double jarak, double kecepatan) {
     double waktu = (jarak / kecepatan) * 60;
     return waktu.toStringAsFixed(0);
@@ -396,8 +439,8 @@ class OSMScreenProvider extends ChangeNotifier {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-      titikAwal = const LatLng(3.587524, 98.690725);
+      titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      // titikAwal = const LatLng(3.587524, 98.690725);
       // print('Posisi sekarang: $titikAwal');
       print('GPS BERJALAN');
       await _fetchCoordinatesAndBuildRoute();
@@ -480,6 +523,7 @@ class OSMScreenProvider extends ChangeNotifier {
       // print('Polyline dibuat dengan poin: $polylinePoints');
       _totalJarak = polylinePoints.length.toDouble();
     } else {
+      print('Jalur Tidak Muncul');
       jalurRute = null;
       _totalJarak = 0.0;
     }
@@ -489,9 +533,9 @@ class OSMScreenProvider extends ChangeNotifier {
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     const String apiKey =
-        '5b3ce3597851110001cf6248674fa4eb294c48fd846fa1dd7f5ddf4d';
+        '5b3ce3597851110001cf6248d71c89a2a7144d338bb708820d2cd99b';
     final String url =
-        'https://api.openrouteservice.org/v2/directions/cycling-road?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));
