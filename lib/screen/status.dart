@@ -50,12 +50,16 @@ class _StatusScreenState extends State<StatusScreen> {
             return provider.isloading2
                 ? Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Tunggu Sebentar...'),
                         CircularProgressIndicator(
                           color: mycolor.color1,
                           strokeWidth: 3,
                         ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        const Text('Tunggu Sebentar...'),
                       ],
                     ),
                   )
@@ -250,7 +254,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    ...provider.titikTujuan.map((latLng) {
+                                    ...provider.listTitikTujuan1.map((latLng) {
                                       // print('LatLng: $latLng');
                                       var data =
                                           provider.dataPengantaran.firstWhere(
@@ -272,10 +276,6 @@ class _StatusScreenState extends State<StatusScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text('${data['Alamat_Tujuan']}',
-                                                    style: const TextStyle(
-                                                      fontSize: 18,
-                                                    )),
-                                                Text('${data['Deskripsi']}',
                                                     style: const TextStyle(
                                                       fontSize: 18,
                                                     )),
@@ -330,7 +330,7 @@ class _StatusScreenState extends State<StatusScreen> {
                               Text(
                                 provider.isloading1
                                     ? 'Jarak Tempuh'
-                                    : 'Jarak ${provider.totalJarak.toStringAsFixed(1)} km',
+                                    : 'Jarak ${provider.totalJarak1.toStringAsFixed(1)} km',
                                 style: TextStyle(
                                   color: mycolor.color1,
                                   fontSize: 20,
@@ -358,7 +358,7 @@ class _StatusScreenState extends State<StatusScreen> {
                               Text(
                                 provider.isloading1
                                     ? 'Waktu Tempuh'
-                                    : 'Waktu ${provider.waktuTempuh} menit',
+                                    : 'Waktu ${provider.waktuTempuh1} menit',
                                 style: TextStyle(
                                   color: mycolor.color1,
                                   fontSize: 20,
@@ -1048,6 +1048,20 @@ class _StatusScreenState extends State<StatusScreen> {
                                 )),
                               ],
                             ),
+                          Container(
+                            color: mycolor.color1,
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              provider.isloading1
+                                  ? 'Jarak Tempuh'
+                                  : 'Total Jarak = ${provider.totalJarak.toStringAsFixed(1)} km',
+                              style: TextStyle(
+                                color: mycolor.color2,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                           const SizedBox(
                             height: 20,
                           ),

@@ -1,6 +1,7 @@
 import 'package:aplikurir/component/custom_button.dart';
 import 'package:aplikurir/screen/login.dart';
 import 'package:aplikurir/screen/status.dart';
+import 'package:aplikurir/screen/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -223,6 +224,27 @@ class _MapScreenState extends State<MapScreen> {
           ],
         ),
         Positioned(
+          bottom: 100,
+          left: 60,
+          right: 60,
+          child: ElevatedButton(
+            onPressed: () => _testAlgoritmaAstar(context),
+            style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(mycolor.color2),
+              side: WidgetStatePropertyAll(
+                  BorderSide(color: mycolor.color1, width: 2)),
+            ),
+            child: Text(
+              'Test Algoritma A-Star',
+              style: TextStyle(
+                color: mycolor.color1,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        Positioned(
           bottom: 50,
           left: 60,
           right: 60,
@@ -237,6 +259,27 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _testAlgoritmaAstar(BuildContext context) {
+    final mycolor = CustomStyle();
+    showModalBottomSheet(
+      scrollControlDisabledMaxHeightRatio: 9.0,
+      showDragHandle: true,
+      backgroundColor: mycolor.color1,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        Map<String, dynamic> userData = widget.user as Map<String, dynamic>;
+        return SizedBox(
+          width: double.infinity,
+          height: 750,
+          child: TestAlgoAstar(
+            user: userData,
+          ),
+        );
+      },
     );
   }
 

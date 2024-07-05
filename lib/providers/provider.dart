@@ -17,6 +17,7 @@ class OSMScreenProvider extends ChangeNotifier {
   late MapController mapController = MapController();
   final int idKurir;
   final AlgoritmaAStar _algoritmaAStar = AlgoritmaAStar();
+
   String _prediksiAlamat = '';
   List<dynamic> dataPengantaran = [];
   Map<String, dynamic>? dataPenerima;
@@ -24,6 +25,7 @@ class OSMScreenProvider extends ChangeNotifier {
   LatLng lokasiAwal = const LatLng(0.0, 0.0);
 
   List<LatLng> titikTujuan = [];
+  List<LatLng> listTitikTujuan1 = [];
   List<LatLng> listTitikTujuan2 = [];
   List<LatLng> listTitikTujuan3 = [];
   List<LatLng> listTitikTujuan4 = [];
@@ -38,10 +40,16 @@ class OSMScreenProvider extends ChangeNotifier {
 
   StreamSubscription<Position>? _positionStreamSubscription;
   Timer? _pollingTimer;
+
   double _totalJarak = 0.0;
   String _waktuTempuh = '0';
   double _lastTotalJarak = 0.0;
   String _lastWaktuTempuh = '0';
+
+  double _totalJarak1 = 0.0;
+  String _waktuTempuh1 = '0';
+  double _lastTotalJarak1 = 0.0;
+  String _lastWaktuTempuh1 = '0';
 
   double _totalJarak2 = 0.0;
   String _waktuTempuh2 = '0';
@@ -73,9 +81,13 @@ class OSMScreenProvider extends ChangeNotifier {
   bool get isloading2 => _isLoading2;
 
   String get prediksiAlamat => _prediksiAlamat;
+  bool get cekDataPengantaran => dataPengantaran.isEmpty;
+
   double get totalJarak => _lastTotalJarak;
   String get waktuTempuh => _lastWaktuTempuh;
-  bool get cekDataPengantaran => dataPengantaran.isEmpty;
+
+  double get totalJarak1 => _lastTotalJarak1;
+  String get waktuTempuh1 => _lastWaktuTempuh1;
 
   double get totalJarak2 => _lastTotalJarak2;
   String get waktuTempuh2 => _lastWaktuTempuh2;
@@ -91,6 +103,8 @@ class OSMScreenProvider extends ChangeNotifier {
 
   double get totalJarak6 => _lastTotalJarak6;
   String get waktuTempuh6 => _lastWaktuTempuh6;
+
+  String get textPerhitungan => _algoritmaAStar.text;
 
   OSMScreenProvider(this.globalkey, this.context, this.idKurir) {
     mapController = MapController();
@@ -112,7 +126,6 @@ class OSMScreenProvider extends ChangeNotifier {
       // print("Tidak bisa mengambil data: ${e.toString()}");
       // print('Error: $e');
     } finally {
-      _isLoading = false;
       safeNotifyListeners();
     }
   }
@@ -121,16 +134,18 @@ class OSMScreenProvider extends ChangeNotifier {
     List<LatLng> fetchedCoordinates =
         await _ambilDataKurir.fetchCoordinates(idKurir);
     fetchedCoordinates =
-        // _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
-        _algoritmaAStar.urutkanDenganAStar(
-            fetchedCoordinates[0], fetchedCoordinates);
+        await _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
+    // _algoritmaAStar.urutkanDenganAStar(
+    //     fetchedCoordinates[0], fetchedCoordinates);
+    // titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
     // titikTujuan = [titikAwal, fetchedCoordinates[0]];
-    // titikTujuan = [titikAwal, ...fetchedCoordinates];
-    titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
+    titikTujuan = [titikAwal, ...fetchedCoordinates];
 
     _buatPolyline();
-    _hitungTotalJarak();
     _lokasiAlamat(titikAwal);
+
+    listTitikTujuan1 = [titikAwal, fetchedCoordinates[0]];
+    _hitungTotalJarak1();
 
     listTitikTujuan2 = [fetchedCoordinates[0], fetchedCoordinates[1]];
     _hitungTotalJarak2();
@@ -146,6 +161,9 @@ class OSMScreenProvider extends ChangeNotifier {
 
     listTitikTujuan6 = [fetchedCoordinates[4], fetchedCoordinates[5]];
     _hitungTotalJarak6();
+
+    _hitungTotalJarak();
+    safeNotifyListeners();
   }
 
   Future<void> updateStatus(String status, String waktu, String tanggal,
@@ -239,6 +257,34 @@ class OSMScreenProvider extends ChangeNotifier {
     if (_totalJarak != _lastTotalJarak || _waktuTempuh != _lastWaktuTempuh) {
       _lastTotalJarak = _totalJarak;
       _lastWaktuTempuh = _waktuTempuh;
+      _isLoading1 = false;
+      safeNotifyListeners();
+    }
+  }
+
+  void _hitungTotalJarak1() async {
+    _totalJarak1 = 0.0;
+    for (int i = 0; i < listTitikTujuan1.length - 1; i++) {
+      final route =
+          await _getRoute(listTitikTujuan1[i], listTitikTujuan1[i + 1]);
+      if (route != null) {
+        for (int j = 0; j < route.length - 1; j++) {
+          _totalJarak1 += Geolocator.distanceBetween(
+            route[j].latitude,
+            route[j].longitude,
+            route[j + 1].latitude,
+            route[j + 1].longitude,
+          );
+        }
+      }
+    }
+    _totalJarak1 /= 1000;
+    _waktuTempuh1 = calculateTravelTime(_totalJarak1, 30.0);
+    _isLoading2 = false;
+    if (_totalJarak1 != _lastTotalJarak1 ||
+        _waktuTempuh1 != _lastWaktuTempuh1) {
+      _lastTotalJarak1 = _totalJarak1;
+      _lastWaktuTempuh1 = _waktuTempuh1;
       _isLoading1 = false;
       safeNotifyListeners();
     }
@@ -521,19 +567,19 @@ class OSMScreenProvider extends ChangeNotifier {
         strokeWidth: 5,
       );
       // print('Polyline dibuat dengan poin: $polylinePoints');
-      _totalJarak = polylinePoints.length.toDouble();
+      // _totalJarak1 = polylinePoints.length.toDouble();
+      _isLoading = false;
     } else {
       print('Jalur Tidak Muncul');
       jalurRute = null;
-      _totalJarak = 0.0;
+      _totalJarak1 = 0.0;
     }
-    _isLoading = false;
+
     safeNotifyListeners();
   }
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
-    const String apiKey =
-        '5b3ce3597851110001cf6248d71c89a2a7144d338bb708820d2cd99b';
+    String apiKey = _algoritmaAStar.api;
     final String url =
         'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
@@ -558,7 +604,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
   void startDelivery() {
     _buatPolyline();
-    _isLoading = false;
   }
 
   void cancelDelivery() {
@@ -568,8 +613,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _pollingTimer = null;
     dataPengantaran = [];
     titikTujuan = [];
-
-    _totalJarak = 0.0;
+    _totalJarak1 = 0.0;
     _isLoading = true;
     _isLoading1 = true;
     jalurRute = null;
