@@ -21,18 +21,23 @@ class AlgoritmaAStar {
       LatLng start, List<LatLng> points) async {
     List<LatLng> hasilHitungan = [];
     LatLng ambilStart = start;
-    print('Hasil Hitungan: $hasilHitungan');
+    print('Memulai urutkan dengan A-Star dari titik: ${formatLatLng(start)}');
+    print('Titik-titik tujuan: ${points.map(formatLatLng).toList()}');
+
     while (points.isNotEmpty) {
       Node? jalur = await cariJalurTerpendek(ambilStart, points);
       if (jalur != null) {
         hasilHitungan.add(jalur.point);
         points.remove(jalur.point);
+        print('Menambahkan titik: ${formatLatLng(jalur.point)}');
         ambilStart = jalur.point;
       } else {
         break;
       }
     }
-    await cetakJarakAntarTitik(hasilHitungan);
+
+    print('Hasil Hitungan Akhir: ${hasilHitungan.map(formatLatLng).toList()}');
+    await cetakJarakAntarTitik(points);
 
     return hasilHitungan;
   }
@@ -121,6 +126,11 @@ class AlgoritmaAStar {
           route[j + 1].longitude,
         );
       }
+      print(
+          'Jarak antara ${formatLatLng(a)} dan ${formatLatLng(b)}: $jarak meter');
+    } else {
+      print(
+          'Gagal mendapatkan rute antara ${formatLatLng(a)} dan ${formatLatLng(b)}');
     }
     return jarak;
   }
@@ -128,7 +138,7 @@ class AlgoritmaAStar {
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     String apiKey = '5b3ce3597851110001cf624887fa3701ae5f48b3b90b263aeea89390';
     final String url =
-        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -139,9 +149,11 @@ class AlgoritmaAStar {
           return LatLng(coord[1], coord[0]);
         }).toList();
       } else {
+        print('Failed to get route: ${response.statusCode}');
         return null;
       }
     } catch (e) {
+      print('Error getting route: $e');
       return null;
     }
   }

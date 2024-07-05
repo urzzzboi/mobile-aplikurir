@@ -140,6 +140,7 @@ class OSMScreenProvider extends ChangeNotifier {
     // titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
     // titikTujuan = [titikAwal, fetchedCoordinates[0]];
     titikTujuan = [titikAwal, ...fetchedCoordinates];
+    print(titikAwal);
 
     _buatPolyline();
     _lokasiAlamat(titikAwal);
@@ -581,7 +582,7 @@ class OSMScreenProvider extends ChangeNotifier {
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     String apiKey = '5b3ce3597851110001cf624887fa3701ae5f48b3b90b263aeea89390';
     final String url =
-        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -589,6 +590,7 @@ class OSMScreenProvider extends ChangeNotifier {
         final data = json.decode(response.body);
         final List coordinates = data['features'][0]['geometry']['coordinates'];
         // print('Koodinat Posisi Awal: $coordinates');
+        print('ambil rute terbaca');
         return coordinates.map((coord) {
           return LatLng(coord[1], coord[0]);
         }).toList();

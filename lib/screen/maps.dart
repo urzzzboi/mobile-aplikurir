@@ -171,7 +171,9 @@ class _MapScreenState extends State<MapScreen> {
             openStreetMapTileLayer,
             if (provider.jalurRute != null || provider.titikTujuan.length == 1)
               PolylineLayer(
-                polylines: [provider.jalurRute!],
+                polylines: [
+                  provider.jalurRute!,
+                ],
               ),
             MarkerLayer(
               markers: [
