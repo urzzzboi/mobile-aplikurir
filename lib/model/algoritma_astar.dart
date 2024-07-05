@@ -97,7 +97,7 @@ class AlgoritmaAStar {
 
         int index1 = i + 1;
         int index2 = j + 1;
-        // print('$jarakFormatted');
+        print('$jarakFormatted dan $hFormatted dan$fFormatted');
         text +=
             '\nJarak antara $index1 dan $index2: \nJarak g(n): $jarakFormatted, h(n): $hFormatted, f(n): $fFormatted\n';
       }
@@ -136,7 +136,7 @@ class AlgoritmaAStar {
   }
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
-    String apiKey = '5b3ce3597851110001cf624887fa3701ae5f48b3b90b263aeea89390';
+    String apiKey = '5b3ce3597851110001cf6248cffb9efe0e784c9aa607057d0ae29e0b';
     final String url =
         'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
