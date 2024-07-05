@@ -16,7 +16,7 @@ class Node {
 
 class AlgoritmaAStar {
   String text = '';
-  String api = '5b3ce3597851110001cf62485d5c00507a554490bd236566906887cf';
+  String api = '5b3ce3597851110001cf624887fa3701ae5f48b3b90b263aeea89390';
 
   Future<List<LatLng>> urutkanDenganAStar(
       LatLng start, List<LatLng> points) async {

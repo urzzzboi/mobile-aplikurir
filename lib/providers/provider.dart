@@ -483,7 +483,7 @@ class OSMScreenProvider extends ChangeNotifier {
     }
     try {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        desiredAccuracy: LocationAccuracy.best,
       );
       titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
       // titikAwal = const LatLng(3.587524, 98.690725);
