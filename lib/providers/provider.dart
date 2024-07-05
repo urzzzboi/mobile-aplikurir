@@ -579,7 +579,7 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
-    String apiKey = _algoritmaAStar.api;
+    String apiKey = '5b3ce3597851110001cf624887fa3701ae5f48b3b90b263aeea89390';
     final String url =
         'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
