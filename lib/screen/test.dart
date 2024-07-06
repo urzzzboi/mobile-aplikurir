@@ -123,6 +123,20 @@ class _TestAlgoAstarState extends State<TestAlgoAstar> {
                   ],
                 ),
               ),
+              Container(
+                color: mycolor.color1,
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  provider.isloading1
+                      ? 'Jarak Tempuh'
+                      : 'Total Jarak = ${provider.totalJarak.toStringAsFixed(1)} km',
+                  style: TextStyle(
+                    color: mycolor.color2,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ],
           );
         }),

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
 class ApiService {
-  static const String url = 'http://192.168.143.98:8081';
+  static const String url = 'http://192.168.137.1:8081';
 
   Future<List<LatLng>> fetchCoordinates(int idKurir) async {
     final response = await http.get(Uri.parse('$url/dataPengantaran/$idKurir'));
