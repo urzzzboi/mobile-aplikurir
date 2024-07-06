@@ -59,6 +59,7 @@ class _TestAlgoAstarState extends State<TestAlgoAstar> {
                     ),
                     ...List.generate(provider.titikTujuan.length, (index) {
                       var latLng = provider.titikTujuan[index];
+                      print('ambil text: ${provider.textPerhitungan}');
                       var data = provider.dataPengantaran.firstWhere(
                         (item) {
                           bool match = item['latitude'] == latLng.latitude &&
