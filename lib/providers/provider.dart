@@ -410,6 +410,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh2 = calculateTravelTime(_totalJarak2, 30.0);
 
+    _isLoading2 = false;
     if (_totalJarak2 != _lastTotalJarak2 ||
         _waktuTempuh2 != _lastWaktuTempuh2) {
       _lastTotalJarak2 = _totalJarak2;
@@ -445,6 +446,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh3 = calculateTravelTime(_totalJarak3, 30.0);
 
+    _isLoading2 = false;
     if (_totalJarak3 != _lastTotalJarak3 ||
         _waktuTempuh3 != _lastWaktuTempuh3) {
       _lastTotalJarak3 = _totalJarak3;
@@ -480,6 +482,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh4 = calculateTravelTime(_totalJarak4, 30.0);
 
+    _isLoading2 = false;
     if (_totalJarak4 != _lastTotalJarak4 ||
         _waktuTempuh4 != _lastWaktuTempuh4) {
       _lastTotalJarak4 = _totalJarak4;
@@ -515,6 +518,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh5 = calculateTravelTime(_totalJarak5, 30.0);
 
+    _isLoading2 = false;
     if (_totalJarak5 != _lastTotalJarak5 ||
         _waktuTempuh5 != _lastWaktuTempuh5) {
       _lastTotalJarak5 = _totalJarak5;
@@ -550,6 +554,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh6 = calculateTravelTime(_totalJarak6, 30.0);
 
+    _isLoading2 = false;
     if (_totalJarak6 != _lastTotalJarak6 ||
         _waktuTempuh6 != _lastWaktuTempuh6) {
       _lastTotalJarak6 = _totalJarak6;
@@ -784,27 +789,29 @@ class OSMScreenProvider extends ChangeNotifier {
 
   void cancelDelivery() {
     _positionStreamSubscription?.cancel();
-
     _positionStreamSubscription = null;
-
     _pollingTimer?.cancel();
-
     _pollingTimer = null;
-
     dataPengantaran = [];
-
     titikTujuan = [];
-
+    listTitikTujuan1 = [];
+    listTitikTujuan2 = [];
+    listTitikTujuan3 = [];
+    listTitikTujuan4 = [];
+    listTitikTujuan5 = [];
+    listTitikTujuan6 = [];
     _totalJarak1 = 0.0;
-
+    _totalJarak2 = 0.0;
+    _totalJarak3 = 0.0;
+    _totalJarak4 = 0.0;
+    _totalJarak5 = 0.0;
+    _totalJarak6 = 0.0;
     _isLoading = true;
-
     _isLoading1 = true;
+    _isLoading2 = true;
 
     jalurRute = null;
-
     _prediksiAlamat = '';
-
     safeNotifyListeners();
   }
 
