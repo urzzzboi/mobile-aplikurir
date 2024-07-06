@@ -48,23 +48,23 @@ class _StatusScreenState extends State<StatusScreen> {
           builder: (context, provider, _) {
             final mycolor = CustomStyle();
             return
-                // provider.isloading2
-                //     ? Center(
-                //         child: Column(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           children: [
-                //             CircularProgressIndicator(
-                //               color: mycolor.color1,
-                //               strokeWidth: 3,
-                //             ),
-                //             SizedBox(
-                //               height: 10,
-                //             ),
-                //             const Text('Tunggu Sebentar...'),
-                //           ],
-                //         ),
-                //       )
-                //     :
+                provider.isloading2
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              color: mycolor.color1,
+                              strokeWidth: 3,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Tunggu Sebentar...'),
+                          ],
+                        ),
+                      )
+                    :
                 ListView(children: [
               Padding(
                 padding: const EdgeInsets.all(20),
@@ -1005,6 +1005,20 @@ class _StatusScreenState extends State<StatusScreen> {
                           )),
                         ],
                       ),
+                    Container(
+                      color: mycolor.color1,
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        provider.isloading1
+                            ? 'Jarak Tempuh'
+                            : 'Total Jarak = ${provider.totalJarak.toStringAsFixed(1)} km',
+                        style: TextStyle(
+                          color: mycolor.color2,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                     const SizedBox(
                       height: 20,
                     ),
