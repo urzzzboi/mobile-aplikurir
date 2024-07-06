@@ -37,7 +37,7 @@ class AlgoritmaAStar {
     }
 
     print('Hasil Hitungan Akhir: ${hasilHitungan.map(formatLatLng).toList()}');
-    await cetakJarakAntarTitik(points);
+    await cetakJarakAntarTitik(hasilHitungan);
 
     return hasilHitungan;
   }
@@ -97,7 +97,7 @@ class AlgoritmaAStar {
 
         int index1 = i + 1;
         int index2 = j + 1;
-        print('$jarakFormatted dan $hFormatted dan$fFormatted');
+        print('menampilkan test:$jarakFormatted dan $hFormatted dan$fFormatted');
         text +=
             '\nJarak antara $index1 dan $index2: \nJarak g(n): $jarakFormatted, h(n): $hFormatted, f(n): $fFormatted\n';
       }
@@ -136,7 +136,7 @@ class AlgoritmaAStar {
   }
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
-    String apiKey = '';
+    String apiKey = '5b3ce3597851110001cf624882ac086197a74a69922b8220b80d7e4a';
     final String url =
         'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
@@ -145,15 +145,17 @@ class AlgoritmaAStar {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final List coordinates = data['features'][0]['geometry']['coordinates'];
+        // print('Koodinat Posisi Awal: $coordinates');
+        print('ambil rute terbaca');
         return coordinates.map((coord) {
           return LatLng(coord[1], coord[0]);
         }).toList();
       } else {
-        print('Failed to get route: ${response.statusCode}');
+        // print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error getting route: $e');
+      // print("Error pengambilan posisi awal karena $e");
       return null;
     }
   }

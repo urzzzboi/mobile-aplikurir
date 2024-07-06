@@ -484,7 +484,7 @@ class OSMScreenProvider extends ChangeNotifier {
     }
     try {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
+        desiredAccuracy: LocationAccuracy.high,
       );
       titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
       // titikAwal = const LatLng(3.587524, 98.690725);
@@ -493,7 +493,7 @@ class OSMScreenProvider extends ChangeNotifier {
       await _fetchCoordinatesAndBuildRoute();
       _positionStreamSubscription = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.best,
+          accuracy: LocationAccuracy.high,
           distanceFilter: 10,
         ),
       ).listen((Position posisiSekarang) {
