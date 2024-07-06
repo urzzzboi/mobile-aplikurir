@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'dart:math';
-import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 class Node {
@@ -139,7 +139,7 @@ class AlgoritmaAStar {
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
     String apiKey = '5b3ce3597851110001cf6248c4a8b4773ffd4d24a4a6f5dfe490f37f';
     final String url =
-        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));

@@ -10,16 +10,6 @@ import 'package:aplikurir/api/api_service.dart';
 import 'package:aplikurir/model/algoritma_astar.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
-
-
-
-
-
-
-
-
-
 class OSMScreenProvider extends ChangeNotifier {
   final GlobalKey<ScaffoldState> globalkey;
 
@@ -189,17 +179,16 @@ class OSMScreenProvider extends ChangeNotifier {
         await _ambilDataKurir.fetchCoordinates(idKurir);
 
     fetchedCoordinates =
-        await _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
+        // await _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
 
-    // _algoritmaAStar.urutkanDenganAStar(
-
-    //     fetchedCoordinates[0], fetchedCoordinates);
+        await _algoritmaAStar.urutkanDenganAStar(
+            fetchedCoordinates[0], fetchedCoordinates);
 
     // titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
 
     // titikTujuan = [titikAwal, fetchedCoordinates[0]];
 
-    titikTujuan = [titikAwal, ...fetchedCoordinates];
+    titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
 
     print(titikAwal);
 
@@ -759,7 +748,7 @@ class OSMScreenProvider extends ChangeNotifier {
     String apiKey = '5b3ce3597851110001cf6248c4a8b4773ffd4d24a4a6f5dfe490f37f';
 
     final String url =
-        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));
