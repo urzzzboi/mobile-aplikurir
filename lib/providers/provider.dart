@@ -33,6 +33,8 @@ class OSMScreenProvider extends ChangeNotifier {
 
   LatLng lokasiAwal = const LatLng(0.0, 0.0);
 
+  List<LatLng> polylinePoints = [];
+
   List<LatLng> titikTujuan = [];
 
   List<LatLng> listTitikTujuan1 = [];
@@ -189,14 +191,11 @@ class OSMScreenProvider extends ChangeNotifier {
     // titikTujuan = [titikAwal, fetchedCoordinates[0]];
 
     titikTujuan = [titikAwal, ...fetchedCoordinates];
+    _ambilTotalJarak(fetchedCoordinates);
 
     print(titikAwal);
-
     _buatPolyline();
-
     _lokasiAlamat(titikAwal);
-
-    _ambilTotalJarak(fetchedCoordinates);
 
     safeNotifyListeners();
   }
@@ -232,9 +231,8 @@ class OSMScreenProvider extends ChangeNotifier {
       _hitungTotalJarak6();
     }
 
-    _hitungTotalJarak();
-
-    _hitungTotalJarak();
+    _hitungTotalJarakSemua();
+    safeNotifyListeners();
   }
 
   Future<void> updateStatus(String status, String waktu, String tanggal,
@@ -315,7 +313,7 @@ class OSMScreenProvider extends ChangeNotifier {
     }
   }
 
-  void _hitungTotalJarak() async {
+  void _hitungTotalJarakSemua() async {
     _totalJarak = 0.0;
 
     for (int i = 0; i < titikTujuan.length - 1; i++) {
@@ -336,8 +334,6 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak /= 1000;
 
     _waktuTempuh = calculateTravelTime(_totalJarak, 30.0);
-
-    _isLoading2 = false;
 
     if (_totalJarak != _lastTotalJarak || _waktuTempuh != _lastWaktuTempuh) {
       _lastTotalJarak = _totalJarak;
@@ -370,19 +366,13 @@ class OSMScreenProvider extends ChangeNotifier {
     }
 
     _totalJarak1 /= 1000;
-
     _waktuTempuh1 = calculateTravelTime(_totalJarak1, 30.0);
-
     _isLoading2 = false;
-
     if (_totalJarak1 != _lastTotalJarak1 ||
         _waktuTempuh1 != _lastWaktuTempuh1) {
       _lastTotalJarak1 = _totalJarak1;
-
       _lastWaktuTempuh1 = _waktuTempuh1;
-
       _isLoading1 = false;
-
       safeNotifyListeners();
     }
   }
@@ -709,8 +699,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
   void _buatPolyline() async {
     if (titikTujuan.isNotEmpty && titikTujuan.length > 1) {
-      final List<LatLng> polylinePoints = [];
-
       for (int i = 0; i < titikTujuan.length - 1; i++) {
         final LatLng start = titikTujuan[i];
 
@@ -751,10 +739,10 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
-    String apiKey = '5b3ce3597851110001cf6248c4a8b4773ffd4d24a4a6f5dfe490f37f';
+    String apiKey = '5b3ce3597851110001cf62484de604868349433ba74c5ccdf1add05b';
 
     final String url =
-        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/cycling-road?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -794,25 +782,50 @@ class OSMScreenProvider extends ChangeNotifier {
     _pollingTimer = null;
     dataPengantaran = [];
     titikTujuan = [];
+    polylinePoints = [];
     listTitikTujuan1 = [];
     listTitikTujuan2 = [];
     listTitikTujuan3 = [];
     listTitikTujuan4 = [];
     listTitikTujuan5 = [];
     listTitikTujuan6 = [];
+    _totalJarak = 0.0;
+    _waktuTempuh = '0';
+    _lastTotalJarak = 0.0;
+    _lastWaktuTempuh = '0';
     _totalJarak1 = 0.0;
+    _waktuTempuh1 = '0';
+    _lastTotalJarak1 = 0.0;
+    _lastWaktuTempuh1 = '0';
     _totalJarak2 = 0.0;
+    _waktuTempuh2 = '0';
+    _lastTotalJarak2 = 0.0;
+    _lastWaktuTempuh2 = '0';
     _totalJarak3 = 0.0;
+    _waktuTempuh3 = '0';
+    _lastTotalJarak3 = 0.0;
+    _lastWaktuTempuh3 = '0';
     _totalJarak4 = 0.0;
+    _waktuTempuh4 = '0';
+    _lastTotalJarak4 = 0.0;
+    _lastWaktuTempuh4 = '0';
     _totalJarak5 = 0.0;
+    _waktuTempuh5 = '0';
+    _lastTotalJarak5 = 0.0;
+    _lastWaktuTempuh5 = '0';
     _totalJarak6 = 0.0;
+    _waktuTempuh6 = '0';
+    _lastTotalJarak6 = 0.0;
+    _lastWaktuTempuh6 = '0';
     _isLoading = true;
     _isLoading1 = true;
     _isLoading2 = true;
-
+    titikAwal = const LatLng(0.0, 0.0);
+    lokasiAwal = const LatLng(0.0, 0.0);
     jalurRute = null;
     _prediksiAlamat = '';
     safeNotifyListeners();
+    _isDisposed = false;
   }
 
   @override
