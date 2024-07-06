@@ -179,16 +179,16 @@ class OSMScreenProvider extends ChangeNotifier {
         await _ambilDataKurir.fetchCoordinates(idKurir);
 
     fetchedCoordinates =
-        // await _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
+        await _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
 
-        await _algoritmaAStar.urutkanDenganAStar(
-            fetchedCoordinates[0], fetchedCoordinates);
+    // await _algoritmaAStar.urutkanDenganAStar(
+    //     fetchedCoordinates[0], fetchedCoordinates);
 
     // titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
 
     // titikTujuan = [titikAwal, fetchedCoordinates[0]];
 
-    titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
+    titikTujuan = [titikAwal, ...fetchedCoordinates];
 
     print(titikAwal);
 
@@ -626,9 +626,10 @@ class OSMScreenProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.best,
       );
 
-      titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
 
       // titikAwal = const LatLng(3.587524, 98.690725);
+      titikAwal = const LatLng(3.569774, 98.696144);
 
       // print('Posisi sekarang: $titikAwal');
 
