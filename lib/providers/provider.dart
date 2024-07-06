@@ -240,7 +240,7 @@ class OSMScreenProvider extends ChangeNotifier {
   void _hitungTotalJarak() async {
     _totalJarak = 0.0;
     for (int i = 0; i < titikTujuan.length - 1; i++) {
-      final route = await getRoute(titikTujuan[i], titikTujuan[i + 1]);
+      final route = await _getRoute(titikTujuan[i], titikTujuan[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak += Geolocator.distanceBetween(
@@ -267,7 +267,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak1 = 0.0;
     for (int i = 0; i < listTitikTujuan1.length - 1; i++) {
       final route =
-          await getRoute(listTitikTujuan1[i], listTitikTujuan1[i + 1]);
+          await _getRoute(listTitikTujuan1[i], listTitikTujuan1[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak1 += Geolocator.distanceBetween(
@@ -295,7 +295,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak2 = 0.0;
     for (int i = 0; i < listTitikTujuan2.length - 1; i++) {
       final route =
-          await getRoute(listTitikTujuan2[i], listTitikTujuan2[i + 1]);
+          await _getRoute(listTitikTujuan2[i], listTitikTujuan2[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak2 += Geolocator.distanceBetween(
@@ -324,7 +324,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak3 = 0.0;
     for (int i = 0; i < listTitikTujuan3.length - 1; i++) {
       final route =
-          await getRoute(listTitikTujuan3[i], listTitikTujuan3[i + 1]);
+          await _getRoute(listTitikTujuan3[i], listTitikTujuan3[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak3 += Geolocator.distanceBetween(
@@ -353,7 +353,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak4 = 0.0;
     for (int i = 0; i < listTitikTujuan4.length - 1; i++) {
       final route =
-          await getRoute(listTitikTujuan4[i], listTitikTujuan4[i + 1]);
+          await _getRoute(listTitikTujuan4[i], listTitikTujuan4[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak4 += Geolocator.distanceBetween(
@@ -382,7 +382,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak5 = 0.0;
     for (int i = 0; i < listTitikTujuan5.length - 1; i++) {
       final route =
-          await getRoute(listTitikTujuan5[i], listTitikTujuan5[i + 1]);
+          await _getRoute(listTitikTujuan5[i], listTitikTujuan5[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak5 += Geolocator.distanceBetween(
@@ -411,7 +411,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak6 = 0.0;
     for (int i = 0; i < listTitikTujuan6.length - 1; i++) {
       final route =
-          await getRoute(listTitikTujuan6[i], listTitikTujuan6[i + 1]);
+          await _getRoute(listTitikTujuan6[i], listTitikTujuan6[i + 1]);
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
           _totalJarak6 += Geolocator.distanceBetween(
@@ -551,7 +551,7 @@ class OSMScreenProvider extends ChangeNotifier {
       for (int i = 0; i < titikTujuan.length - 1; i++) {
         final LatLng start = titikTujuan[i];
         final LatLng end = titikTujuan[i + 1];
-        final route = await getRoute(start, end);
+        final route = await _getRoute(start, end);
         if (route != null) {
           polylinePoints.addAll(route);
         }
@@ -567,8 +567,8 @@ class OSMScreenProvider extends ChangeNotifier {
         borderStrokeWidth: 2,
         strokeWidth: 5,
       );
-      print('Polyline dibuat dengan poin: $polylinePoints');
-
+      // print('Polyline dibuat dengan poin: $polylinePoints');
+      // _totalJarak1 = polylinePoints.length.toDouble();
       _isLoading = false;
     } else {
       print('Jalur Tidak Muncul');
@@ -579,11 +579,10 @@ class OSMScreenProvider extends ChangeNotifier {
     safeNotifyListeners();
   }
 
-  Future<List<LatLng>?> getRoute(LatLng start, LatLng end) async {
-    const String apiKey =
-        '5b3ce3597851110001cf6248cffb9efe0e784c9aa607057d0ae29e0b';
+  Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
+    String apiKey = '5b3ce3597851110001cf624882ac086197a74a69922b8220b80d7e4a';
     final String url =
-        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -596,10 +595,11 @@ class OSMScreenProvider extends ChangeNotifier {
           return LatLng(coord[1], coord[0]);
         }).toList();
       } else {
+        // print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print("Error pengambilan posisi awal karena $e");
+      // print("Error pengambilan posisi awal karena $e");
       return null;
     }
   }
@@ -616,11 +616,6 @@ class OSMScreenProvider extends ChangeNotifier {
     dataPengantaran = [];
     titikTujuan = [];
     _totalJarak1 = 0.0;
-    _totalJarak2 = 0.0;
-    _totalJarak3 = 0.0;
-    _totalJarak4 = 0.0;
-    _totalJarak5 = 0.0;
-    _totalJarak6 = 0.0;
     _isLoading = true;
     _isLoading1 = true;
     jalurRute = null;
@@ -633,7 +628,6 @@ class OSMScreenProvider extends ChangeNotifier {
     _isDisposed = true;
     _positionStreamSubscription?.cancel();
     _pollingTimer?.cancel();
-    mapController.dispose();
     super.dispose();
   }
 

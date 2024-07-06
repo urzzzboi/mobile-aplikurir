@@ -1,6 +1,6 @@
+import 'dart:convert';
 import 'dart:math';
-import 'package:aplikurir/providers/provider.dart';
-import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -16,11 +16,6 @@ class Node {
 
 class AlgoritmaAStar {
   String text = '';
-  late int idKurir;
-  late BuildContext context;
-  late GlobalKey<ScaffoldState> globalKey;
-
-  OSMScreenProvider get osm => OSMScreenProvider(globalKey, context, idKurir);
 
   Future<List<LatLng>> urutkanDenganAStar(
       LatLng start, List<LatLng> points) async {
@@ -121,7 +116,7 @@ class AlgoritmaAStar {
 
   Future<double> jarak(LatLng a, LatLng b) async {
     double jarak = 0.0;
-    final route = await osm.getRoute(a, b);
+    final route = await _getRoute(a, b);
     if (route != null) {
       for (int j = 0; j < route.length - 1; j++) {
         jarak += Geolocator.distanceBetween(
@@ -138,6 +133,29 @@ class AlgoritmaAStar {
           'Gagal mendapatkan rute antara ${formatLatLng(a)} dan ${formatLatLng(b)}');
     }
     return jarak;
+  }
+
+  Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
+    String apiKey = '';
+    final String url =
+        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List coordinates = data['features'][0]['geometry']['coordinates'];
+        return coordinates.map((coord) {
+          return LatLng(coord[1], coord[0]);
+        }).toList();
+      } else {
+        print('Failed to get route: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error getting route: $e');
+      return null;
+    }
   }
 }
 
