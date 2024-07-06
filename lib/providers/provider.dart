@@ -144,7 +144,11 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _buatPolyline();
     _lokasiAlamat(titikAwal);
+    _ambilTotalJarak(fetchedCoordinates);
+    safeNotifyListeners();
+  }
 
+  Future<void> _ambilTotalJarak(List<LatLng> fetchedCoordinates) async {
     listTitikTujuan1 = [titikAwal, fetchedCoordinates[0]];
     _hitungTotalJarak1();
 
@@ -164,7 +168,6 @@ class OSMScreenProvider extends ChangeNotifier {
     _hitungTotalJarak6();
 
     _hitungTotalJarak();
-    safeNotifyListeners();
   }
 
   Future<void> updateStatus(String status, String waktu, String tanggal,
