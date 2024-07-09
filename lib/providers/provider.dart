@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:aplikurir/component/custom_color.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
@@ -12,123 +13,67 @@ import 'package:permission_handler/permission_handler.dart';
 
 class OSMScreenProvider extends ChangeNotifier {
   final GlobalKey<ScaffoldState> globalkey;
-
   final BuildContext context;
-
+  final int idKurir;
   final ApiService _ambilDataKurir = ApiService();
-
   late MapController mapController = MapController();
 
-  final int idKurir;
-
   final AlgoritmaAStar _algoritmaAStar = AlgoritmaAStar();
-
   String _prediksiAlamat = '';
-
   List<dynamic> dataPengantaran = [];
-
   Map<String, dynamic>? dataPenerima;
-
   LatLng titikAwal = const LatLng(0.0, 0.0);
-
   LatLng lokasiAwal = const LatLng(0.0, 0.0);
-
   List<LatLng> polylinePoints = [];
-
   List<LatLng> titikTujuan = [];
-
+  List<LatLng> titikTujuan1 = [];
   List<LatLng> listTitikTujuan1 = [];
-
   List<LatLng> listTitikTujuan2 = [];
-
   List<LatLng> listTitikTujuan3 = [];
-
   List<LatLng> listTitikTujuan4 = [];
-
   List<LatLng> listTitikTujuan5 = [];
-
   List<LatLng> listTitikTujuan6 = [];
-
   Polyline? jalurRute;
-
   bool _isLoading = true;
-
   bool _isLoading1 = true;
-
   bool _isLoading2 = true;
-
   bool _isDisposed = false;
-
   StreamSubscription<Position>? _positionStreamSubscription;
-
   Timer? _pollingTimer;
-
   double _totalJarak = 0.0;
-
   String _waktuTempuh = '0';
-
   double _lastTotalJarak = 0.0;
-
   String _lastWaktuTempuh = '0';
-
   double _totalJarak1 = 0.0;
-
   String _waktuTempuh1 = '0';
-
   double _lastTotalJarak1 = 0.0;
-
   String _lastWaktuTempuh1 = '0';
-
   double _totalJarak2 = 0.0;
-
   String _waktuTempuh2 = '0';
-
   double _lastTotalJarak2 = 0.0;
-
   String _lastWaktuTempuh2 = '0';
-
   double _totalJarak3 = 0.0;
-
   String _waktuTempuh3 = '0';
-
   double _lastTotalJarak3 = 0.0;
-
   String _lastWaktuTempuh3 = '0';
-
   double _totalJarak4 = 0.0;
-
   String _waktuTempuh4 = '0';
-
   double _lastTotalJarak4 = 0.0;
-
   String _lastWaktuTempuh4 = '0';
-
   double _totalJarak5 = 0.0;
-
   String _waktuTempuh5 = '0';
-
   double _lastTotalJarak5 = 0.0;
-
   String _lastWaktuTempuh5 = '0';
-
   double _totalJarak6 = 0.0;
-
   String _waktuTempuh6 = '0';
-
   double _lastTotalJarak6 = 0.0;
-
   String _lastWaktuTempuh6 = '0';
 
   bool get isloading => _isLoading;
-
   bool get isloading1 => _isLoading1;
-
   bool get isloading2 => _isLoading2;
-
   String get prediksiAlamat => _prediksiAlamat;
-
   bool get cekDataPengantaran => dataPengantaran.isEmpty;
-
   double get totalJarak => _lastTotalJarak;
 
   String get waktuTempuh => _lastWaktuTempuh;
@@ -145,6 +90,8 @@ class OSMScreenProvider extends ChangeNotifier {
   double get totalJarak6 => _lastTotalJarak6;
   String get waktuTempuh6 => _lastWaktuTempuh6;
   String get textPerhitungan => _algoritmaAStar.text;
+  String get textPerhitungan2 => _algoritmaAStar.text2;
+  bool get loadPerhitungan => _algoritmaAStar.load;
 
   OSMScreenProvider(this.globalkey, this.context, this.idKurir) {
     mapController = MapController();
@@ -182,26 +129,20 @@ class OSMScreenProvider extends ChangeNotifier {
 
     fetchedCoordinates =
         await _algoritmaAStar.urutkanDenganAStar(titikAwal, fetchedCoordinates);
-
     // await _algoritmaAStar.urutkanDenganAStar(
     //     fetchedCoordinates[0], fetchedCoordinates);
-
     // titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
-
-    // titikTujuan = [titikAwal, fetchedCoordinates[0]];
-
+    titikTujuan1 = [titikAwal, fetchedCoordinates[0]];
     titikTujuan = [titikAwal, ...fetchedCoordinates];
     _ambilTotalJarak(fetchedCoordinates);
-
     print(titikAwal);
-    _buatPolyline();
     _lokasiAlamat(titikAwal);
-
+    _buatPolyline();
     safeNotifyListeners();
   }
 
   Future<void> _ambilTotalJarak(List<LatLng> fetchedCoordinates) async {
-    if (fetchedCoordinates.length >= 1) {
+    if (fetchedCoordinates.length > 1) {
       listTitikTujuan1 = [titikAwal, fetchedCoordinates[0]];
       _hitungTotalJarak1();
     }
@@ -317,7 +258,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _totalJarak = 0.0;
 
     for (int i = 0; i < titikTujuan.length - 1; i++) {
-      final route = await _getRoute(titikTujuan[i], titikTujuan[i + 1]);
+      final route = await getRoute(titikTujuan[i], titikTujuan[i + 1]);
 
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
@@ -344,6 +285,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
       safeNotifyListeners();
     }
+    _isLoading2 = false;
   }
 
   void _hitungTotalJarak1() async {
@@ -351,7 +293,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     for (int i = 0; i < listTitikTujuan1.length - 1; i++) {
       final route =
-          await _getRoute(listTitikTujuan1[i], listTitikTujuan1[i + 1]);
+          await getRoute(listTitikTujuan1[i], listTitikTujuan1[i + 1]);
 
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
@@ -367,7 +309,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _totalJarak1 /= 1000;
     _waktuTempuh1 = calculateTravelTime(_totalJarak1, 30.0);
-    _isLoading2 = false;
+
     if (_totalJarak1 != _lastTotalJarak1 ||
         _waktuTempuh1 != _lastWaktuTempuh1) {
       _lastTotalJarak1 = _totalJarak1;
@@ -382,7 +324,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     for (int i = 0; i < listTitikTujuan2.length - 1; i++) {
       final route =
-          await _getRoute(listTitikTujuan2[i], listTitikTujuan2[i + 1]);
+          await getRoute(listTitikTujuan2[i], listTitikTujuan2[i + 1]);
 
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
@@ -400,7 +342,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh2 = calculateTravelTime(_totalJarak2, 30.0);
 
-    _isLoading2 = false;
     if (_totalJarak2 != _lastTotalJarak2 ||
         _waktuTempuh2 != _lastWaktuTempuh2) {
       _lastTotalJarak2 = _totalJarak2;
@@ -418,7 +359,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     for (int i = 0; i < listTitikTujuan3.length - 1; i++) {
       final route =
-          await _getRoute(listTitikTujuan3[i], listTitikTujuan3[i + 1]);
+          await getRoute(listTitikTujuan3[i], listTitikTujuan3[i + 1]);
 
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
@@ -436,7 +377,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh3 = calculateTravelTime(_totalJarak3, 30.0);
 
-    _isLoading2 = false;
     if (_totalJarak3 != _lastTotalJarak3 ||
         _waktuTempuh3 != _lastWaktuTempuh3) {
       _lastTotalJarak3 = _totalJarak3;
@@ -454,7 +394,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     for (int i = 0; i < listTitikTujuan4.length - 1; i++) {
       final route =
-          await _getRoute(listTitikTujuan4[i], listTitikTujuan4[i + 1]);
+          await getRoute(listTitikTujuan4[i], listTitikTujuan4[i + 1]);
 
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
@@ -472,7 +412,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh4 = calculateTravelTime(_totalJarak4, 30.0);
 
-    _isLoading2 = false;
     if (_totalJarak4 != _lastTotalJarak4 ||
         _waktuTempuh4 != _lastWaktuTempuh4) {
       _lastTotalJarak4 = _totalJarak4;
@@ -490,7 +429,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     for (int i = 0; i < listTitikTujuan5.length - 1; i++) {
       final route =
-          await _getRoute(listTitikTujuan5[i], listTitikTujuan5[i + 1]);
+          await getRoute(listTitikTujuan5[i], listTitikTujuan5[i + 1]);
 
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
@@ -508,7 +447,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh5 = calculateTravelTime(_totalJarak5, 30.0);
 
-    _isLoading2 = false;
     if (_totalJarak5 != _lastTotalJarak5 ||
         _waktuTempuh5 != _lastWaktuTempuh5) {
       _lastTotalJarak5 = _totalJarak5;
@@ -526,7 +464,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
     for (int i = 0; i < listTitikTujuan6.length - 1; i++) {
       final route =
-          await _getRoute(listTitikTujuan6[i], listTitikTujuan6[i + 1]);
+          await getRoute(listTitikTujuan6[i], listTitikTujuan6[i + 1]);
 
       if (route != null) {
         for (int j = 0; j < route.length - 1; j++) {
@@ -544,7 +482,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _waktuTempuh6 = calculateTravelTime(_totalJarak6, 30.0);
 
-    _isLoading2 = false;
     if (_totalJarak6 != _lastTotalJarak6 ||
         _waktuTempuh6 != _lastWaktuTempuh6) {
       _lastTotalJarak6 = _totalJarak6;
@@ -587,51 +524,39 @@ class OSMScreenProvider extends ChangeNotifier {
 
   Future<void> _ambilPosisiTengah() async {
     bool serviceEnabled;
-
     LocationPermission permission;
-
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
     if (!serviceEnabled) {
       // print("Lokasi dinonaktifkan");
-
       return;
     }
 
     permission = await Geolocator.checkPermission();
-
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-
       if (permission == LocationPermission.denied) {
         // print("Akses Lokasi Ditolak");
-
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       // print("Akses Lokasi Ditolak secara Permanen");
-
       return;
     }
-
     try {
       Position posisiSekarang = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
+        desiredAccuracy: LocationAccuracy.high,
       );
 
       // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-
-      // titikAwal = const LatLng(3.587524, 98.690725);
-      titikAwal = const LatLng(3.569774, 98.696144);
-
+      titikAwal = const LatLng(3.569892, 98.696219);
+      // titikAwal = const LatLng(3.5981786043868387, 98.69063821680933);
       // print('Posisi sekarang: $titikAwal');
 
       print('GPS BERJALAN');
 
       await _fetchCoordinatesAndBuildRoute();
-
       _positionStreamSubscription = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.best,
@@ -699,12 +624,14 @@ class OSMScreenProvider extends ChangeNotifier {
 
   void _buatPolyline() async {
     if (titikTujuan.isNotEmpty && titikTujuan.length > 1) {
+      final List<LatLng> polylinePoints = [];
+
       for (int i = 0; i < titikTujuan.length - 1; i++) {
         final LatLng start = titikTujuan[i];
 
         final LatLng end = titikTujuan[i + 1];
 
-        final route = await _getRoute(start, end);
+        final route = await getRoute(start, end);
 
         if (route != null) {
           polylinePoints.addAll(route);
@@ -738,11 +665,11 @@ class OSMScreenProvider extends ChangeNotifier {
     safeNotifyListeners();
   }
 
-  Future<List<LatLng>?> _getRoute(LatLng start, LatLng end) async {
-    String apiKey = '5b3ce3597851110001cf62484de604868349433ba74c5ccdf1add05b';
+  Future<List<LatLng>?> getRoute(LatLng start, LatLng end) async {
+    String apiKey = '5b3ce3597851110001cf62487c746b4766704f29930f4246a3463ac6';
 
     final String url =
-        'https://api.openrouteservice.org/v2/directions/cycling-road?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -772,7 +699,8 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   void startDelivery() {
-    _buatPolyline();
+    _ambilPosisiTengah();
+    _fetchCoordinatesAndBuildRoute();
   }
 
   void cancelDelivery() {

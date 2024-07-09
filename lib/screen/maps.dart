@@ -172,9 +172,27 @@ class _MapScreenState extends State<MapScreen> {
             if (provider.jalurRute != null || provider.titikTujuan.length == 1)
               PolylineLayer(
                 polylines: [provider.jalurRute!],
-              ),
+              )
+            else
+              Text('Tidak tampil Rute'),
             MarkerLayer(
               markers: [
+                // if (provider.titikTujuan.length > 1)
+                //   ...provider.titikTujuan
+                //       .sublist(1)
+                //       .map(
+                //         (latLng) => Marker(
+                //           width: 60,
+                //           height: 60,
+                //           point: latLng,
+                //           child: const Icon(
+                //             Icons.location_pin,
+                //             color: Colors.red,
+                //             size: 50,
+                //           ),
+                //         ),
+                //       )
+                //       .toList(),
                 if (provider.titikTujuan.length > 1)
                   ...List.generate(provider.titikTujuan.length - 1, (index) {
                     LatLng latLng = provider.titikTujuan[index + 1];
@@ -199,7 +217,7 @@ class _MapScreenState extends State<MapScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                '${index + 1}',
+                                '${index + 2}',
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   color: Colors.white,
@@ -224,6 +242,27 @@ class _MapScreenState extends State<MapScreen> {
           ],
         ),
         Positioned(
+          bottom: 50,
+          right: 10,
+          child: IconButton(
+            onPressed: () {
+              provider.cancelDelivery();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MapScreen(user: widget.user),
+                ),
+              );
+            },
+            style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(mycolor.color2),
+              side: WidgetStatePropertyAll(
+                  BorderSide(color: mycolor.color1, width: 2)),
+            ),
+            icon: Icon(Icons.refresh),
+          ),
+        ),
+        Positioned(
           bottom: 100,
           left: 60,
           right: 60,
@@ -238,7 +277,7 @@ class _MapScreenState extends State<MapScreen> {
               'Test Algoritma A-Star',
               style: TextStyle(
                 color: mycolor.color1,
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -274,7 +313,7 @@ class _MapScreenState extends State<MapScreen> {
         Map<String, dynamic> userData = widget.user as Map<String, dynamic>;
         return SizedBox(
           width: double.infinity,
-          height: 750,
+          height: 650,
           child: TestAlgoAstar(
             user: userData,
           ),
