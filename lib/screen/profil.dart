@@ -33,21 +33,26 @@ class ProfilScreen extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
+            // Container(
+            //   padding: const EdgeInsets.only(top: 20, bottom: 5),
+            //   child: const CircleAvatar(
+            //     backgroundImage: AssetImage('assets/images/logo-icon.png'),
+            //     radius: 60,
+            //   ),
+            // ),
+
             Container(
-              padding: const EdgeInsets.only(top: 20, bottom: 5),
-              child: const CircleAvatar(
-                backgroundImage: AssetImage('assets/images/logo-icon.png'),
-                radius: 60,
+              margin: const EdgeInsets.all(30),
+              child: Text(
+                user['nama'].toString(),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            Text(
-              user['nama'].toString(),
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+
             SizedBox(
               width: 370,
               child: Divider(

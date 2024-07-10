@@ -123,6 +123,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                         ),
                                       ),
                                     );
+                                    provider.startDelivery();
                                   },
                                   child: Text(
                                     "Gagal",
@@ -165,6 +166,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                         ),
                                       ),
                                     );
+                                    provider.startDelivery();
                                   },
                                   child: Text(
                                     "Selesai",

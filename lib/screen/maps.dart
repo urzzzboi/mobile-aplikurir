@@ -45,7 +45,8 @@ class _MapScreenState extends State<MapScreen> {
                 if (provider.isloading) {
                   return _buildLoadingScreen(mycolor);
                 } else {
-                  return provider.dataPengantaran.isEmpty
+                  return provider.titikTujuan.isEmpty ||
+                          provider.dataPengantaran.isEmpty
                       ? _buildCompletionDialog(context, mycolor, provider)
                       : _buildMapWidget(context, provider);
                 }
@@ -177,8 +178,8 @@ class _MapScreenState extends State<MapScreen> {
               Text('Tidak tampil Rute'),
             MarkerLayer(
               markers: [
-                // if (provider.titikTujuan.length > 1)
-                //   ...provider.titikTujuan
+                // if (provider.titikTujuan1.length > 1)
+                //   ...provider.titikTujuan1
                 //       .sublist(1)
                 //       .map(
                 //         (latLng) => Marker(
