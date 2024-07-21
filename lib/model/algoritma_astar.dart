@@ -6,13 +6,13 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 
 class Node {
-  LatLng point;
-  double g;
-  double h;
-  double f;
+  LatLng node;
+  double gn;
+  double hn;
+  double fn;
   Node? parent;
 
-  Node(this.point, this.g, this.h, this.f, {this.parent});
+  Node(this.node, this.gn, this.hn, this.fn, {this.parent});
 }
 
 class AlgoritmaAStar {
@@ -21,17 +21,18 @@ class AlgoritmaAStar {
   bool load = true;
 
   Future<List<LatLng>> urutkanDenganAStar(
-      LatLng start, List<LatLng> points) async {
+      LatLng titikAwal, List<LatLng> titikTujuan) async {
     List<LatLng> hasilHitungan = [];
-    LatLng ambilStart = start;
-    List<LatLng> semuaTitik = [start, ...points]; // Include start in all points
+    LatLng titikSekarang = titikAwal;
+    List<LatLng> semuaTitik = [titikAwal, ...titikTujuan];
 
-    while (points.isNotEmpty) {
-      Node? jalur = await cariJalurTerpendek(ambilStart, points, semuaTitik);
+    while (titikTujuan.isNotEmpty) {
+      Node? jalur =
+          await cariJalurTerpendek(titikSekarang, titikTujuan, semuaTitik);
       if (jalur != null) {
-        hasilHitungan.add(jalur.point);
-        points.remove(jalur.point);
-        ambilStart = jalur.point;
+        hasilHitungan.add(jalur.node);
+        titikTujuan.remove(jalur.node);
+        titikSekarang = jalur.node;
       } else {
         break;
       }
@@ -40,61 +41,63 @@ class AlgoritmaAStar {
     return hasilHitungan;
   }
 
-  Future<Node?> cariJalurTerpendek(
-      LatLng start, List<LatLng> points, List<LatLng> semuaTitik) async {
-    List<Node> openList = [Node(start, 0, 0, 0)];
+  Future<Node?> cariJalurTerpendek(LatLng titikAwal, List<LatLng> titikTujuan,
+      List<LatLng> semuaTitik) async {
+    List<Node> openList = [Node(titikAwal, 0, 0, 0)];
     List<LatLng> closedList = [];
 
     while (openList.isNotEmpty) {
-      Node jalur = openList.reduce((a, b) => a.f < b.f ? a : b);
-      String gnTerpakai = '${jalur.g.toStringAsFixed(2)} km';
-      String hnTerpakai = jalur.h.toStringAsFixed(7);
-      String fnTerpakai = '${jalur.f.toStringAsFixed(2)} km';
+      Node jalur = openList.reduce((a, b) => a.fn < b.fn ? a : b);
+      String gnTerpakai = '${jalur.gn.toStringAsFixed(2)} km';
+      String hnTerpakai = jalur.hn.toStringAsFixed(7);
+      String fnTerpakai = '${jalur.fn.toStringAsFixed(2)} km';
 
-      if (jalur.f != 0.00) {
-        int indexStart = semuaTitik.indexOf(jalur.parent?.point ?? start) + 1;
-        int indexPoint = semuaTitik.indexOf(jalur.point) + 1;
+      if (jalur.fn != 0.00) {
+        int indextitikAwal =
+            semuaTitik.indexOf(jalur.parent?.node ?? titikAwal) + 1;
+        int indexTitik = semuaTitik.indexOf(jalur.node) + 1;
 
-        String startAddress = await getAddress(jalur.parent?.point ?? start);
-        String endAddress = await getAddress(jalur.point);
+        String alamattitikAwal =
+            await dapatkanAlamat(jalur.parent?.node ?? titikAwal);
+        String alamatTitik = await dapatkanAlamat(jalur.node);
         text2 +=
-            '\nJarak antara titik $indexStart ($startAddress) ke titik $indexPoint ($endAddress)\n \n gn:$gnTerpakai, h(n):$hnTerpakai, f(n):$fnTerpakai \n';
+            '\nJarak antara titik $indextitikAwal ($alamattitikAwal) ke titik $indexTitik ($alamatTitik)\n \n gn:$gnTerpakai, h(n):$hnTerpakai, f(n):$fnTerpakai \n';
         load = false;
       }
 
       openList.remove(jalur);
 
-      if (points.contains(jalur.point)) {
+      if (titikTujuan.contains(jalur.node)) {
         return jalur;
       }
 
-      closedList.add(jalur.point);
+      closedList.add(jalur.node);
 
-      List<LatLng> simpanCloseList =
-          points.where((point) => !closedList.contains(point)).toList();
-      for (LatLng i in simpanCloseList) {
-        double distance = await _getRoute(jalur.point, i);
-        double nilaiSementaraG = distance;
-        double h = hitungHeuristic(i, start);
-        double f = nilaiSementaraG + h;
+      List<LatLng> titikTersisa =
+          titikTujuan.where((titik) => !closedList.contains(titik)).toList();
+      for (LatLng titik in titikTersisa) {
+        double jarak = await hitungJarak(jalur.node, titik);
+        double nilaiSementaraGn = jarak;
+        double hn = hitungHeuristic(titik, titikAwal);
+        double fn = nilaiSementaraGn + hn;
 
-        String gn = '${nilaiSementaraG.toStringAsFixed(2)} km';
-        String hn = h.toStringAsFixed(7);
-        String fn = '${f.toStringAsFixed(2)} km';
+        String gn = '${nilaiSementaraGn.toStringAsFixed(2)} km';
+        String hnStr = hn.toStringAsFixed(7);
+        String fnStr = '${fn.toStringAsFixed(2)} km';
 
         text +=
-            '\nJarak ${semuaTitik.indexOf(jalur.point) + 1} ke titik ${semuaTitik.indexOf(i) + 1} =>  g(n): $gn, h(n): $hn, f(n): $fn\n ';
+            '\nJarak ${semuaTitik.indexOf(jalur.node) + 1} ke titik ${semuaTitik.indexOf(titik) + 1} =>  g(n): $gn, h(n): $hnStr, f(n): $fnStr\n ';
 
         Node? nodeTerpakai =
-            openList.firstWhereOrNull((node) => node.point == i);
+            openList.firstWhereOrNull((node) => node.node == titik);
         if (nodeTerpakai != null) {
-          if (nilaiSementaraG < nodeTerpakai.g) {
-            nodeTerpakai.g = nilaiSementaraG;
-            nodeTerpakai.f = f;
+          if (nilaiSementaraGn < nodeTerpakai.gn) {
+            nodeTerpakai.gn = nilaiSementaraGn;
+            nodeTerpakai.fn = fn;
             nodeTerpakai.parent = jalur;
           }
         } else {
-          openList.add(Node(i, nilaiSementaraG, h, f, parent: jalur));
+          openList.add(Node(titik, nilaiSementaraGn, hn, fn, parent: jalur));
         }
       }
     }
@@ -108,10 +111,10 @@ class AlgoritmaAStar {
     return sqrt(pow(deltaLat, 2) + pow(deltaLon, 2));
   }
 
-  Future<double> _getRoute(LatLng a, LatLng b) async {
+  Future<double> hitungJarak(LatLng a, LatLng b) async {
     String apiKey = '3de6b880-d16f-4d67-b69c-11eedadce956';
     final String url =
-        'https://graphhopper.com/api/1/route?point=${a.latitude},${a.longitude}&point=${b.latitude},${b.longitude}&profile=bike&unit_system=metric&calc_points=false&key=$apiKey';
+        'https://graphhopper.com/api/1/route?point=${a.latitude},${a.longitude}&point=${b.latitude},${b.longitude}&profile=car_delivery&unit_system=metric&calc_points=false&key=$apiKey';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -131,10 +134,10 @@ class AlgoritmaAStar {
     }
   }
 
-  Future<String> getAddress(LatLng point) async {
+  Future<String> dapatkanAlamat(LatLng titik) async {
     try {
       List<Placemark> placemarks =
-          await placemarkFromCoordinates(point.latitude, point.longitude);
+          await placemarkFromCoordinates(titik.latitude, titik.longitude);
       Placemark place = placemarks[0];
       return "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
     } catch (e) {

@@ -550,9 +550,9 @@ class OSMScreenProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-      titikAwal =
-          const LatLng(3.5882391269217924, 98.69052417702248); //mikroskil
+      titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      // titikAwal =
+      //     const LatLng(3.5882391269217924, 98.69052417702248); //mikroskil
       // titikAwal = const LatLng(3.565599937598714, 98.6617 5151097471);
       // titikAwal = const LatLng(3.569892, 98.696219);
       // titikAwal = const LatLng(3.5981786043868387, 98.69063821680933);
@@ -678,7 +678,7 @@ class OSMScreenProvider extends ChangeNotifier {
     String apiKey = '3de6b880-d16f-4d67-b69c-11eedadce956';
 
     final String url =
-        'https://graphhopper.com/api/1/route?point=${start.latitude},${start.longitude}&point=${end.latitude},${end.longitude}&vehicle=car&locale=en&key=$apiKey';
+        'https://graphhopper.com/api/1/route?point=${start.latitude},${start.longitude}&point=${end.latitude},${end.longitude}&vehicle=car_delivery&locale=en&key=$apiKey';
 
     try {
       final response = await http.get(Uri.parse(url));

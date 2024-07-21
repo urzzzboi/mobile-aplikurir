@@ -45,10 +45,15 @@ class _MapScreenState extends State<MapScreen> {
                 if (provider.isloading) {
                   return _buildLoadingScreen(mycolor);
                 } else {
-                  return provider.titikTujuan.isEmpty ||
-                          provider.dataPengantaran.isEmpty
-                      ? _buildCompletionDialog(context, mycolor, provider)
-                      : _buildMapWidget(context, provider);
+                  if (provider.dataPengantaran.isEmpty ||
+                      provider.titikTujuan.isEmpty) {
+                    return _buildCompletionDialog(context, mycolor, provider);
+                  } else if (provider.dataPengantaran.isNotEmpty ||
+                      provider.titikTujuan.isNotEmpty) {
+                    return _buildMapWidget(context, provider);
+                  } else {
+                    return Text('Sedang Menampilkan Peta...');
+                  }
                 }
               },
             ),
