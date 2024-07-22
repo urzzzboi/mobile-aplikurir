@@ -4,7 +4,6 @@ import 'package:aplikurir/screen/status.dart';
 import 'package:aplikurir/screen/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:aplikurir/providers/provider.dart';
 import 'package:aplikurir/component/custom_color.dart';
@@ -42,11 +41,14 @@ class _MapScreenState extends State<MapScreen> {
             key: _scaffoldKey,
             body: Consumer<OSMScreenProvider>(
               builder: (context, provider, _) {
-                return provider.dataPengantaran.isEmpty
-                    ? _buildCompletionDialog(context, mycolor, provider)
-                    : provider.isloading
-                        ? _buildLoadingScreen(mycolor)
-                        : _buildMapWidget(context, provider);
+                if (provider.dataPengantaran.isNotEmpty ||
+                    provider.titikTujuan.isNotEmpty) {
+                  return provider.isloading
+                      ? _buildLoadingScreen(mycolor)
+                      : _buildMapWidget(context, provider);
+                } else {
+                  return _buildCompletionDialog(context, mycolor, provider);
+                }
               },
             ),
           ),
