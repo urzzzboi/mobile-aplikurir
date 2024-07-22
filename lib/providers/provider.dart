@@ -17,7 +17,7 @@ class OSMScreenProvider extends ChangeNotifier {
   final BuildContext context;
   final int idKurir;
   final ApiService _ambilDataKurir = ApiService();
-  late MapController mapController = MapController();
+  MapController mapController = MapController();
 
   final AlgoritmaAStar _algoritmaAStar = AlgoritmaAStar();
   String _prediksiAlamat = '';
@@ -74,7 +74,6 @@ class OSMScreenProvider extends ChangeNotifier {
   bool get isloading1 => _isLoading1;
   bool get isloading2 => _isLoading2;
   String get prediksiAlamat => _prediksiAlamat;
-  bool get cekDataPengantaran => dataPengantaran.isEmpty;
   double get totalJarak => _lastTotalJarak;
 
   String get waktuTempuh => _lastWaktuTempuh;
@@ -107,7 +106,7 @@ class OSMScreenProvider extends ChangeNotifier {
     try {
       dataPengantaran = await _ambilDataKurir.fetchDataPengantaran(idKurir);
       // print('Data pengantaran berhasil diambil: $dataPengantaran');
-      // print(cekDataPengantaran);
+
       if (dataPengantaran.isEmpty) {
         // print('Data tidak bisa diambil');
       }
@@ -498,7 +497,7 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   void _pollingTime() {
-    _pollingTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    _pollingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!_isDisposed) {
         _fetchDataPengantaran();
       }
@@ -547,7 +546,7 @@ class OSMScreenProvider extends ChangeNotifier {
       );
 
       // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-      // titikAwal = const LatLng(3.5882391269217924, 98.69052417702248); //mikroskil
+      // titikAwal = const LatLng(3.588239, 98.690524); //mikroskil
       titikAwal = const LatLng(3.5873978, 98.6918411); //kedua
       // titikAwal = const LatLng(3.569892, 98.696219);
       // titikAwal = const LatLng(3.5981786043868387, 98.69063821680933);
@@ -737,6 +736,7 @@ class OSMScreenProvider extends ChangeNotifier {
   void startDelivery() {
     _ambilPosisiTengah();
     _fetchCoordinatesAndBuildRoute();
+    _isLoading = false;
   }
 
   void cancelDelivery() {
@@ -746,6 +746,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _pollingTimer = null;
     dataPengantaran = [];
     titikTujuan = [];
+    titikTujuan1 = [];
     polylinePoints = [];
     listTitikTujuan1 = [];
     listTitikTujuan2 = [];
