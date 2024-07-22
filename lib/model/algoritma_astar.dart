@@ -112,7 +112,7 @@ class AlgoritmaAStar {
   }
 
   Future<double> hitungJarak(LatLng a, LatLng b) async {
-    String apiKey = '3de6b880-d16f-4d67-b69c-11eedadce956';
+    String apiKey = 'cd981da6-1530-497a-b5e3-2e76f8736538';
     final String url =
         'https://graphhopper.com/api/1/route?point=${a.latitude},${a.longitude}&point=${b.latitude},${b.longitude}&profile=car_delivery&unit_system=metric&calc_points=false&key=$apiKey';
 
