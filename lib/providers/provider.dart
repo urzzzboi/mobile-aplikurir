@@ -107,11 +107,8 @@ class OSMScreenProvider extends ChangeNotifier {
   Future<void> _fetchDataPengantaran() async {
     try {
       dataPengantaran = await _ambilDataKurir.fetchDataPengantaran(idKurir);
-
       // print('Data pengantaran berhasil diambil: $dataPengantaran');
-
       // print(cekDataPengantaran);
-
       if (dataPengantaran.isEmpty) {
         // print('Data tidak bisa diambil');
       }

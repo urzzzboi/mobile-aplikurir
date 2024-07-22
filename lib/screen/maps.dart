@@ -42,16 +42,11 @@ class _MapScreenState extends State<MapScreen> {
             key: _scaffoldKey,
             body: Consumer<OSMScreenProvider>(
               builder: (context, provider, _) {
-                if (provider.isloading) {
-                  return _buildLoadingScreen(mycolor);
-                } else {
-                  if (provider.dataPengantaran.isEmpty ||
-                      provider.titikTujuan.isEmpty) {
-                    return _buildCompletionDialog(context, mycolor, provider);
-                  } else {
-                    return _buildMapWidget(context, provider);
-                  }
-                }
+                return provider.dataPengantaran.isEmpty
+                    ? _buildCompletionDialog(context, mycolor, provider)
+                    : provider.isloading
+                        ? _buildLoadingScreen(mycolor)
+                        : _buildMapWidget(context, provider);
               },
             ),
           ),
