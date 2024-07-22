@@ -258,7 +258,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    ...provider.titikTujuan.map((latLng) {
+                                    ...provider.titikTujuan1.map((latLng) {
                                       // print('LatLng: $latLng');
                                       var data =
                                           provider.dataPengantaran.firstWhere(

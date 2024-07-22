@@ -99,7 +99,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _memintaPerizinanLokasi().then((_) {
       _fetchDataPengantaran();
-
       _pollingTime();
     });
   }

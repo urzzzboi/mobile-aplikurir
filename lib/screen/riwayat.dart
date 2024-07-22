@@ -50,8 +50,8 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
       dataList.sort((a, b) {
         final tanggalPengirimanA = a['tanggal_pengiriman'];
         final tanggalPengirimanB = b['tanggal_pengiriman'];
-        return DateTime.parse(tanggalPengirimanA)
-            .compareTo(DateTime.parse(tanggalPengirimanB));
+        return DateTime.parse(tanggalPengirimanB)
+            .compareTo(DateTime.parse(tanggalPengirimanA));
       });
     });
   }
