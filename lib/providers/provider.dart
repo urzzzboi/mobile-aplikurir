@@ -212,34 +212,40 @@ class OSMScreenProvider extends ChangeNotifier {
           headers: {'Content-Type': 'application/json'},
         );
 
-        if (status == 'Selesai') {
-          final id = selectedData['Id_pengantaran_paket'];
+        if (response.statusCode == 201) {
+          // print('Status OK: $status');
 
-          final deleteResponse = await http.delete(
-              Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
-              headers: {'Content-Type': 'application/json'});
+          if (status == 'Selesai') {
+            final id = selectedData['Id_pengantaran_paket'];
 
-          if (deleteResponse.statusCode == 200) {
-            // print('Data pengantaran paket berhasil dihapus.');
-          } else {
-            print(
-                'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
+            final deleteResponse = await http.delete(
+                Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
+                headers: {'Content-Type': 'application/json'});
+
+            if (deleteResponse.statusCode == 200) {
+              // print('Data pengantaran paket berhasil dihapus.');
+            } else {
+              print(
+                  'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
+            }
           }
-        }
 
-        if (status == 'Gagal') {
-          final id = selectedData['Id_pengantaran_paket'];
+          if (status == 'Gagal') {
+            final id = selectedData['Id_pengantaran_paket'];
 
-          final deleteResponse = await http.delete(
-              Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
-              headers: {'Content-Type': 'application/json'});
+            final deleteResponse = await http.delete(
+                Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
+                headers: {'Content-Type': 'application/json'});
 
-          if (deleteResponse.statusCode == 200) {
-            // print('Data pengantaran paket berhasil dihapus.');
-          } else {
-            print(
-                'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
+            if (deleteResponse.statusCode == 200) {
+              // print('Data pengantaran paket berhasil dihapus.');
+            } else {
+              print(
+                  'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
+            }
           }
+        } else {
+          // print('Data tidak masuk karena: ${response.statusCode}');
         }
       } else {
         // print('Data tidak ditemukan');
