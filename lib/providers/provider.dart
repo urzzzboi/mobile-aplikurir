@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:aplikurir/component/custom_color.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
@@ -16,7 +17,7 @@ class OSMScreenProvider extends ChangeNotifier {
   final BuildContext context;
   final int idKurir;
   final ApiService _ambilDataKurir = ApiService();
-  late MapController mapController = MapController();
+  MapController mapController = MapController();
 
   final AlgoritmaAStar _algoritmaAStar = AlgoritmaAStar();
   String _prediksiAlamat = '';
@@ -73,7 +74,6 @@ class OSMScreenProvider extends ChangeNotifier {
   bool get isloading1 => _isLoading1;
   bool get isloading2 => _isLoading2;
   String get prediksiAlamat => _prediksiAlamat;
-  bool get cekDataPengantaran => dataPengantaran.isEmpty;
   double get totalJarak => _lastTotalJarak;
 
   String get waktuTempuh => _lastWaktuTempuh;
@@ -98,7 +98,6 @@ class OSMScreenProvider extends ChangeNotifier {
 
     _memintaPerizinanLokasi().then((_) {
       _fetchDataPengantaran();
-
       _pollingTime();
     });
   }
@@ -106,10 +105,7 @@ class OSMScreenProvider extends ChangeNotifier {
   Future<void> _fetchDataPengantaran() async {
     try {
       dataPengantaran = await _ambilDataKurir.fetchDataPengantaran(idKurir);
-
       // print('Data pengantaran berhasil diambil: $dataPengantaran');
-
-      // print(cekDataPengantaran);
 
       if (dataPengantaran.isEmpty) {
         // print('Data tidak bisa diambil');
@@ -142,7 +138,7 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   Future<void> _ambilTotalJarak(List<LatLng> fetchedCoordinates) async {
-    if (fetchedCoordinates.length > 1) {
+    if (fetchedCoordinates.length >= 1) {
       listTitikTujuan1 = [titikAwal, fetchedCoordinates[0]];
       _hitungTotalJarak1();
     }
@@ -501,7 +497,7 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   void _pollingTime() {
-    _pollingTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    _pollingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!_isDisposed) {
         _fetchDataPengantaran();
       }
@@ -550,7 +546,9 @@ class OSMScreenProvider extends ChangeNotifier {
       );
 
       // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-      titikAwal = const LatLng(3.569892, 98.696219);
+      // titikAwal = const LatLng(3.588239, 98.690524); //mikroskil
+      titikAwal = const LatLng(3.5873978, 98.6918411); //kedua
+      // titikAwal = const LatLng(3.569892, 98.696219);
       // titikAwal = const LatLng(3.5981786043868387, 98.69063821680933);
       // print('Posisi sekarang: $titikAwal');
 
@@ -623,21 +621,26 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   void _buatPolyline() async {
-    if (titikTujuan.isNotEmpty && titikTujuan.length > 1) {
+    if (titikTujuan1.isNotEmpty && titikTujuan1.length > 1) {
       final List<LatLng> polylinePoints = [];
-
-      for (int i = 0; i < titikTujuan.length - 1; i++) {
-        final LatLng start = titikTujuan[i];
-
-        final LatLng end = titikTujuan[i + 1];
-
+      for (int i = 0; i < titikTujuan1.length - 1; i++) {
+        final LatLng start = titikTujuan1[i];
+        final LatLng end = titikTujuan1[i + 1];
         final route = await getRoute(start, end);
-
         if (route != null) {
           polylinePoints.addAll(route);
         }
       }
-
+      // if (titikTujuan1.isNotEmpty && titikTujuan1.length > 1) {
+      //   final List<LatLng> polylinePoints = [];
+      //   for (int i = 0; i < titikTujuan1.length - 1; i++) {
+      //     final LatLng start = titikTujuan1[i];
+      //     final LatLng end = titikTujuan1[i + 1];
+      //     final route = await getRoute(start, end);
+      //     if (route != null) {
+      //       polylinePoints.addAll(route);
+      //     }
+      //   }
       jalurRute = Polyline(
         gradientColors: [
           Colors.cyan,
@@ -666,10 +669,10 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   Future<List<LatLng>?> getRoute(LatLng start, LatLng end) async {
-    String apiKey = '5b3ce3597851110001cf62487c746b4766704f29930f4246a3463ac6';
+    String apiKey = 'cd981da6-1530-497a-b5e3-2e76f8736538';
 
     final String url =
-        'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+        'https://graphhopper.com/api/1/route?point=${start.latitude},${start.longitude}&point=${end.latitude},${end.longitude}&vehicle=car&locale=en&key=$apiKey';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -677,30 +680,63 @@ class OSMScreenProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        final List coordinates = data['features'][0]['geometry']['coordinates'];
+        String encodedPolyline = data['paths'][0]['points'];
+        List<PointLatLng> decodedPolyline =
+            PolylinePoints().decodePolyline(encodedPolyline);
 
-        // print('Koodinat Posisi Awal: $coordinates');
+        print('Koordinat: $decodedPolyline');
 
-        print('ambil rute terbaca');
-
-        return coordinates.map((coord) {
-          return LatLng(coord[1], coord[0]);
-        }).toList();
+        return decodedPolyline
+            .map((point) => LatLng(point.latitude, point.longitude))
+            .toList();
       } else {
-        // print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
-
+        print('Gagal mengambil rute: ${response.statusCode}');
+        print('Pesan Error: ${response.body}');
         return null;
       }
     } catch (e) {
-      // print("Error pengambilan posisi awal karena $e");
-
+      print("Error mengambil rute: $e");
       return null;
     }
   }
 
+  // Future<List<LatLng>?> getRoute(LatLng start, LatLng end) async {
+  //   String apiKey = '5b3ce3597851110001cf62487c746b4766704f29930f4246a3463ac6';
+
+  //   final String url =
+  //       'https://api.openrouteservice.org/v2/directions/cycling-regular?api_key=$apiKey&start=${start.longitude},${start.latitude}&end=${end.longitude},${end.latitude}';
+
+  //   try {
+  //     final response = await http.get(Uri.parse(url));
+
+  //     if (response.statusCode == 200) {
+  //       final data = json.decode(response.body);
+
+  //       final List coordinates = data['features'][0]['geometry']['coordinates'];
+
+  //       // print('Koodinat Posisi Awal: $coordinates');
+
+  //       print('ambil rute terbaca');
+
+  //       return coordinates.map((coord) {
+  //         return LatLng(coord[1], coord[0]);
+  //       }).toList();
+  //     } else {
+  //       // print('Gagal mengambil koordinat posisi Awal: ${response.statusCode}');
+
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     // print("Error pengambilan posisi awal karena $e");
+
+  //     return null;
+  //   }
+  // }
+
   void startDelivery() {
     _ambilPosisiTengah();
     _fetchCoordinatesAndBuildRoute();
+    _isLoading = false;
   }
 
   void cancelDelivery() {
@@ -710,6 +746,7 @@ class OSMScreenProvider extends ChangeNotifier {
     _pollingTimer = null;
     dataPengantaran = [];
     titikTujuan = [];
+    titikTujuan1 = [];
     polylinePoints = [];
     listTitikTujuan1 = [];
     listTitikTujuan2 = [];
