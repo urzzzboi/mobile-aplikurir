@@ -112,8 +112,9 @@ class _StatusScreenState extends State<StatusScreen> {
                                         'Gagal',
                                         _waktu,
                                         _tanggal,
-                                        provider.titikTujuan,
+                                        provider.titikTujuan1,
                                         context);
+                                        provider.cancelDelivery();
                                     Navigator.pushReplacement<void, void>(
                                       context,
                                       MaterialPageRoute<void>(
@@ -124,7 +125,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                       ),
                                     );
 
-                                    provider.startDelivery();
+                               
                                   },
                                   child: Text(
                                     "Gagal",
@@ -155,9 +156,10 @@ class _StatusScreenState extends State<StatusScreen> {
                                       'Selesai',
                                       _waktu,
                                       _tanggal,
-                                      provider.titikTujuan,
+                                      provider.titikTujuan1,
                                       context,
                                     );
+                                    provider.cancelDelivery();
                                     Navigator.pushReplacement<void, void>(
                                       context,
                                       MaterialPageRoute<void>(
@@ -168,7 +170,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                       ),
                                     );
 
-                                    provider.startDelivery();
+                               
                                   },
                                   child: Text(
                                     "Selesai",

@@ -117,6 +117,7 @@ class OSMScreenProvider extends ChangeNotifier {
     } finally {
       safeNotifyListeners();
     }
+     _isLoading = false;  
   }
 
   Future<void> _fetchCoordinatesAndBuildRoute() async {
@@ -134,6 +135,7 @@ class OSMScreenProvider extends ChangeNotifier {
     print(titikAwal);
     _lokasiAlamat(titikAwal);
     _buatPolyline();
+   
     safeNotifyListeners();
   }
 
@@ -173,15 +175,13 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   Future<void> updateStatus(String status, String waktu, String tanggal,
-      List<LatLng> titikTujuan, BuildContext context) async {
+      List<LatLng> titik, BuildContext context) async {
     try {
       final selectedData = dataPengantaran.firstWhere(
         (item) {
           double itemLatitude = item['latitude'];
-
           double itemLongitude = item['longitude'];
-
-          return titikTujuan.any((latLng) =>
+          return titik.any((latLng) =>
               latLng.latitude == itemLatitude &&
               latLng.longitude == itemLongitude);
         },
@@ -208,47 +208,34 @@ class OSMScreenProvider extends ChangeNotifier {
         );
 
         if (response.statusCode == 201) {
-          // print('Status OK: $status');
+          print('Status updated successfully: $status');
 
-          if (status == 'Selesai') {
+          if (status == 'Selesai' || status == 'Gagal') {
             final id = selectedData['Id_pengantaran_paket'];
 
             final deleteResponse = await http.delete(
-                Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
-                headers: {'Content-Type': 'application/json'});
+              Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
+              headers: {'Content-Type': 'application/json'},
+            );
 
             if (deleteResponse.statusCode == 200) {
-              // print('Data pengantaran paket berhasil dihapus.');
-            } else {
-              print(
-                  'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
-            }
-          }
-
-          if (status == 'Gagal') {
-            final id = selectedData['Id_pengantaran_paket'];
-
-            final deleteResponse = await http.delete(
-                Uri.parse('${ApiService.url}/dataPengantaran2/$id'),
-                headers: {'Content-Type': 'application/json'});
-
-            if (deleteResponse.statusCode == 200) {
-              // print('Data pengantaran paket berhasil dihapus.');
+              print('Data pengantaran paket berhasil dihapus.');
             } else {
               print(
                   'Gagal menghapus data pengantaran paket: ${deleteResponse.statusCode}');
             }
           }
         } else {
-          // print('Data tidak masuk karena: ${response.statusCode}');
+          print('Failed to update status: ${response.statusCode}');
         }
       } else {
-        // print('Data tidak ditemukan');
+        print('Data not found in dataPengantaran');
       }
     } catch (e) {
-      // print('Error: $e');
+      print('Error: $e');
     }
-  }
+}
+
 
   void _hitungTotalJarakSemua() async {
     _totalJarak = 0.0;
@@ -545,9 +532,9 @@ class OSMScreenProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
       // titikAwal = const LatLng(3.588239, 98.690524); //mikroskil
-      titikAwal = const LatLng(3.5873978, 98.6918411); //kedua
+      // titikAwal = const LatLng(3.5873978, 98.6918411); //kedua
       // titikAwal = const LatLng(3.569892, 98.696219);
       // titikAwal = const LatLng(3.5981786043868387, 98.69063821680933);
       // print('Posisi sekarang: $titikAwal');
@@ -656,7 +643,7 @@ class OSMScreenProvider extends ChangeNotifier {
 
       // _totalJarak1 = polylinePoints.length.toDouble();
 
-      _isLoading = false;
+      
     } else {
       print('Jalur Tidak Muncul');
 
