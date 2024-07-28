@@ -2,8 +2,9 @@ import 'package:aplikurir/component/custom_button.dart';
 import 'package:aplikurir/screen/login.dart';
 import 'package:aplikurir/screen/status.dart';
 import 'package:aplikurir/screen/test.dart';
-import 'package:flutter/material.dart';  
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 import 'package:provider/provider.dart';
 import 'package:aplikurir/providers/provider.dart';
@@ -177,60 +178,60 @@ class _MapScreenState extends State<MapScreen> {
               Text('Tidak tampil Rute'),
             MarkerLayer(
               markers: [
-                if (provider.titikTujuan1.length > 1)
-                  ...provider.titikTujuan1
-                      .sublist(1)
-                      .map(
-                        (latLng) => Marker(
-                          width: 60,
-                          height: 60,
-                          point: latLng,
-                          child: const Icon(
-                            Icons.location_pin,
-                            color: Colors.red,
-                            size: 50,
-                          ),
-                        ),
-                      )
-                      .toList(),
-                // if (provider.titikTujuan.length > 1)
-                //   ...List.generate(provider.titikTujuan.length - 1, (index) {
-                //     LatLng latLng = provider.titikTujuan[index + 1];
-                //     return Marker(
-                //       width: 60,
-                //       height: 60,
-                //       point: latLng,
-                //       child: Stack(
-                //         children: [
-                //           Icon(
+                // if (provider.titikTujuan1.length > 1)
+                //   ...provider.titikTujuan1
+                //       .sublist(1)
+                //       .map(
+                //         (latLng) => Marker(
+                //           width: 60,
+                //           height: 60,
+                //           point: latLng,
+                //           child: const Icon(
                 //             Icons.location_pin,
-                //             color: mycolor.color4,
-                //             size: 40,
+                //             color: Colors.red,
+                //             size: 50,
                 //           ),
-                //           Positioned(
-                //             top: 4,
-                //             left: 13,
-                //             child: Container(
-                //               padding: const EdgeInsets.all(3),
-                //               decoration: BoxDecoration(
-                //                 color: mycolor.color4,
-                //                 borderRadius: BorderRadius.circular(20),
-                //               ),
-                //               child: Text(
-                //                 '${index + 2}',
-                //                 textAlign: TextAlign.center,
-                //                 style: const TextStyle(
-                //                   color: Colors.white,
-                //                   fontWeight: FontWeight.bold,
-                //                   fontSize: 14,
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     );
-                //   }).toList(),
+                //         ),
+                //       )
+                //       .toList(),
+                if (provider.titikTujuan.length > 1)
+                  ...List.generate(provider.titikTujuan.length - 1, (index) {
+                    LatLng latLng = provider.titikTujuan[index + 1];
+                    return Marker(
+                      width: 60,
+                      height: 60,
+                      point: latLng,
+                      child: Stack(
+                        children: [
+                          Icon(
+                            Icons.location_pin,
+                            color: mycolor.color4,
+                            size: 40,
+                          ),
+                          Positioned(
+                            top: 4,
+                            left: 13,
+                            child: Container(
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                color: mycolor.color4,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                '${index + 2}',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
                 Marker(
                   width: 40,
                   height: 40,
@@ -241,48 +242,48 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ],
         ),
-        Positioned(
-          bottom: 50,
-          right: 10,
-          child: IconButton(
-            onPressed: () {
-              provider.cancelDelivery();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MapScreen(user: widget.user),
-                ),
-              );
-            },
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(mycolor.color2),
-              side: WidgetStatePropertyAll(
-                  BorderSide(color: mycolor.color1, width: 2)),
-            ),
-            icon: Icon(Icons.refresh),
-          ),
-        ),
-        Positioned(
-          bottom: 100,
-          left: 60,
-          right: 60,
-          child: ElevatedButton(
-            onPressed: () => _testAlgoritmaAstar(context),
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(mycolor.color2),
-              side: WidgetStatePropertyAll(
-                  BorderSide(color: mycolor.color1, width: 2)),
-            ),
-            child: Text(
-              'Test Algoritma A-Star',
-              style: TextStyle(
-                color: mycolor.color1,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
+        // Positioned(
+        //   bottom: 50,
+        //   right: 10,
+        //   child: IconButton(
+        //     onPressed: () {
+        //       provider.cancelDelivery();
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder: (context) => MapScreen(user: widget.user),
+        //         ),
+        //       );
+        //     },
+        //     style: ButtonStyle(
+        //       backgroundColor: WidgetStatePropertyAll(mycolor.color2),
+        //       side: WidgetStatePropertyAll(
+        //           BorderSide(color: mycolor.color1, width: 2)),
+        //     ),
+        //     icon: Icon(Icons.refresh),
+        //   ),
+        // ),
+        // Positioned(
+        //   bottom: 100,
+        //   left: 60,
+        //   right: 60,
+        //   child: ElevatedButton(
+        //     onPressed: () => _testAlgoritmaAstar(context),
+        //     style: ButtonStyle(
+        //       backgroundColor: WidgetStatePropertyAll(mycolor.color2),
+        //       side: WidgetStatePropertyAll(
+        //           BorderSide(color: mycolor.color1, width: 2)),
+        //     ),
+        //     child: Text(
+        //       'Test Algoritma A-Star',
+        //       style: TextStyle(
+        //         color: mycolor.color1,
+        //         fontSize: 16,
+        //         fontWeight: FontWeight.bold,
+        //       ),
+        //     ),
+        //   ),
+        // ),
         Positioned(
           bottom: 50,
           left: 60,

@@ -117,7 +117,7 @@ class OSMScreenProvider extends ChangeNotifier {
     } finally {
       safeNotifyListeners();
     }
-     _isLoading = false;  
+    _isLoading = false;
   }
 
   Future<void> _fetchCoordinatesAndBuildRoute() async {
@@ -135,7 +135,7 @@ class OSMScreenProvider extends ChangeNotifier {
     print(titikAwal);
     _lokasiAlamat(titikAwal);
     _buatPolyline();
-   
+
     safeNotifyListeners();
   }
 
@@ -234,8 +234,7 @@ class OSMScreenProvider extends ChangeNotifier {
     } catch (e) {
       print('Error: $e');
     }
-}
-
+  }
 
   void _hitungTotalJarakSemua() async {
     _totalJarak = 0.0;
@@ -532,8 +531,8 @@ class OSMScreenProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
-      // titikAwal = const LatLng(3.588239, 98.690524); //mikroskil
+      // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
+      titikAwal = const LatLng(3.588239, 98.690524); //mikroskil
       // titikAwal = const LatLng(3.5873978, 98.6918411); //kedua
       // titikAwal = const LatLng(3.569892, 98.696219);
       // titikAwal = const LatLng(3.5981786043868387, 98.69063821680933);
@@ -608,26 +607,26 @@ class OSMScreenProvider extends ChangeNotifier {
   }
 
   void _buatPolyline() async {
-    if (titikTujuan1.isNotEmpty && titikTujuan1.length > 1) {
+    // if (titikTujuan1.isNotEmpty && titikTujuan1.length > 1) {
+    //   final List<LatLng> polylinePoints = [];
+    //   for (int i = 0; i < titikTujuan1.length - 1; i++) {
+    //     final LatLng start = titikTujuan1[i];
+    //     final LatLng end = titikTujuan1[i + 1];
+    //     final route = await getRoute(start, end);
+    //     if (route != null) {
+    //       polylinePoints.addAll(route);
+    //     }
+    //   }
+    if (titikTujuan.isNotEmpty && titikTujuan.length > 1) {
       final List<LatLng> polylinePoints = [];
-      for (int i = 0; i < titikTujuan1.length - 1; i++) {
-        final LatLng start = titikTujuan1[i];
-        final LatLng end = titikTujuan1[i + 1];
+      for (int i = 0; i < titikTujuan.length - 1; i++) {
+        final LatLng start = titikTujuan[i];
+        final LatLng end = titikTujuan[i + 1];
         final route = await getRoute(start, end);
         if (route != null) {
           polylinePoints.addAll(route);
         }
       }
-      // if (titikTujuan1.isNotEmpty && titikTujuan1.length > 1) {
-      //   final List<LatLng> polylinePoints = [];
-      //   for (int i = 0; i < titikTujuan1.length - 1; i++) {
-      //     final LatLng start = titikTujuan1[i];
-      //     final LatLng end = titikTujuan1[i + 1];
-      //     final route = await getRoute(start, end);
-      //     if (route != null) {
-      //       polylinePoints.addAll(route);
-      //     }
-      //   }
       jalurRute = Polyline(
         gradientColors: [
           Colors.cyan,
@@ -637,13 +636,12 @@ class OSMScreenProvider extends ChangeNotifier {
         borderColor: Colors.black,
         borderStrokeWidth: 2,
         strokeWidth: 5,
+        strokeCap: StrokeCap.round,
       );
 
       // print('Polyline dibuat dengan poin: $polylinePoints');
 
       // _totalJarak1 = polylinePoints.length.toDouble();
-
-      
     } else {
       print('Jalur Tidak Muncul');
 
