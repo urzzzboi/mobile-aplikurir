@@ -112,9 +112,9 @@ class _StatusScreenState extends State<StatusScreen> {
                                         'Gagal',
                                         _waktu,
                                         _tanggal,
-                                        provider.titikTujuan1,
+                                        provider.titikUpdate,
                                         context);
-                                        provider.cancelDelivery();
+                                    provider.cancelDelivery();
                                     Navigator.pushReplacement<void, void>(
                                       context,
                                       MaterialPageRoute<void>(
@@ -124,8 +124,6 @@ class _StatusScreenState extends State<StatusScreen> {
                                         ),
                                       ),
                                     );
-
-                               
                                   },
                                   child: Text(
                                     "Gagal",
@@ -156,7 +154,7 @@ class _StatusScreenState extends State<StatusScreen> {
                                       'Selesai',
                                       _waktu,
                                       _tanggal,
-                                      provider.titikTujuan1,
+                                      provider.titikUpdate,
                                       context,
                                     );
                                     provider.cancelDelivery();
@@ -169,8 +167,6 @@ class _StatusScreenState extends State<StatusScreen> {
                                         ),
                                       ),
                                     );
-
-                               
                                   },
                                   child: Text(
                                     "Selesai",

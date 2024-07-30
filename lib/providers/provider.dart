@@ -28,6 +28,7 @@ class OSMScreenProvider extends ChangeNotifier {
   List<LatLng> polylinePoints = [];
   List<LatLng> titikTujuan = [];
   List<LatLng> titikTujuan1 = [];
+  List<LatLng> titikUpdate = [];
   List<LatLng> listTitikTujuan1 = [];
   List<LatLng> listTitikTujuan2 = [];
   List<LatLng> listTitikTujuan3 = [];
@@ -129,6 +130,7 @@ class OSMScreenProvider extends ChangeNotifier {
     // await _algoritmaAStar.urutkanDenganAStar(
     //     fetchedCoordinates[0], fetchedCoordinates);
     // titikTujuan = [fetchedCoordinates[0], ...fetchedCoordinates];
+    titikUpdate = [fetchedCoordinates[0]];
     titikTujuan1 = [titikAwal, fetchedCoordinates[0]];
     titikTujuan = [titikAwal, ...fetchedCoordinates];
     _ambilTotalJarak(fetchedCoordinates);
@@ -534,6 +536,10 @@ class OSMScreenProvider extends ChangeNotifier {
       // titikAwal = LatLng(posisiSekarang.latitude, posisiSekarang.longitude);
       titikAwal = const LatLng(3.588239, 98.690524); //mikroskil
       // titikAwal = const LatLng(3.5873978, 98.6918411); //kedua
+      // titikAwal = const LatLng(3.5889201, 98.6919098); //ketiga
+      // titikAwal = const LatLng(3.5910871, 98.6900711); //keempat
+      // titikAwal = const LatLng(3.5892079, 98.6903458); //kelima
+      // titikAwal = const LatLng(3.5899410, 98.6883087); //keenam
       // titikAwal = const LatLng(3.569892, 98.696219);
       // titikAwal = const LatLng(3.5981786043868387, 98.69063821680933);
       // print('Posisi sekarang: $titikAwal');
